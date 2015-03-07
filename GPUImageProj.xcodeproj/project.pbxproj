@@ -13,6 +13,13 @@
 		0B5B51B21AAAEFBE00646081 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0B5B51B11AAAEFBE00646081 /* Images.xcassets */; };
 		0B5B51B51AAAEFBE00646081 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0B5B51B31AAAEFBE00646081 /* LaunchScreen.xib */; };
 		0B5B51C11AAAEFBE00646081 /* GPUImageProjTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5B51C01AAAEFBE00646081 /* GPUImageProjTests.swift */; };
+		0B5B51CB1AAAF08900646081 /* ImageProcessing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5B51CA1AAAF08900646081 /* ImageProcessing.swift */; };
+		0B5B51D31AAAF1BE00646081 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B5B51CE1AAAF1BE00646081 /* AVFoundation.framework */; };
+		0B5B51D41AAAF1BE00646081 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B5B51CF1AAAF1BE00646081 /* CoreMedia.framework */; };
+		0B5B51D51AAAF1BE00646081 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B5B51D01AAAF1BE00646081 /* CoreVideo.framework */; };
+		0B5B51D61AAAF1BE00646081 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B5B51D11AAAF1BE00646081 /* OpenGLES.framework */; };
+		0B5B51D71AAAF1BE00646081 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B5B51D21AAAF1BE00646081 /* QuartzCore.framework */; };
+		0B5B51D91AAAF1CE00646081 /* GPUImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B5B51D81AAAF1CE00646081 /* GPUImage.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,6 +43,13 @@
 		0B5B51BA1AAAEFBE00646081 /* GPUImageProjTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GPUImageProjTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0B5B51BF1AAAEFBE00646081 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0B5B51C01AAAEFBE00646081 /* GPUImageProjTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GPUImageProjTests.swift; sourceTree = "<group>"; };
+		0B5B51CA1AAAF08900646081 /* ImageProcessing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageProcessing.swift; sourceTree = "<group>"; };
+		0B5B51CE1AAAF1BE00646081 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		0B5B51CF1AAAF1BE00646081 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
+		0B5B51D01AAAF1BE00646081 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
+		0B5B51D11AAAF1BE00646081 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
+		0B5B51D21AAAF1BE00646081 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		0B5B51D81AAAF1CE00646081 /* GPUImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GPUImage.framework; path = Carthage/Build/iOS/GPUImage.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -43,6 +57,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0B5B51D91AAAF1CE00646081 /* GPUImage.framework in Frameworks */,
+				0B5B51D31AAAF1BE00646081 /* AVFoundation.framework in Frameworks */,
+				0B5B51D41AAAF1BE00646081 /* CoreMedia.framework in Frameworks */,
+				0B5B51D51AAAF1BE00646081 /* CoreVideo.framework in Frameworks */,
+				0B5B51D61AAAF1BE00646081 /* OpenGLES.framework in Frameworks */,
+				0B5B51D71AAAF1BE00646081 /* QuartzCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -62,6 +82,7 @@
 				0B5B51A71AAAEFBE00646081 /* GPUImageProj */,
 				0B5B51BD1AAAEFBE00646081 /* GPUImageProjTests */,
 				0B5B51A61AAAEFBE00646081 /* Products */,
+				0B5B51CD1AAAF10400646081 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -79,6 +100,7 @@
 			children = (
 				0B5B51AA1AAAEFBE00646081 /* AppDelegate.swift */,
 				0B5B51AC1AAAEFBE00646081 /* ViewController.swift */,
+				0B5B51CA1AAAF08900646081 /* ImageProcessing.swift */,
 				0B5B51AE1AAAEFBE00646081 /* Main.storyboard */,
 				0B5B51B11AAAEFBE00646081 /* Images.xcassets */,
 				0B5B51B31AAAEFBE00646081 /* LaunchScreen.xib */,
@@ -112,6 +134,19 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		0B5B51CD1AAAF10400646081 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				0B5B51D81AAAF1CE00646081 /* GPUImage.framework */,
+				0B5B51CE1AAAF1BE00646081 /* AVFoundation.framework */,
+				0B5B51CF1AAAF1BE00646081 /* CoreMedia.framework */,
+				0B5B51D01AAAF1BE00646081 /* CoreVideo.framework */,
+				0B5B51D11AAAF1BE00646081 /* OpenGLES.framework */,
+				0B5B51D21AAAF1BE00646081 /* QuartzCore.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -122,6 +157,7 @@
 				0B5B51A11AAAEFBE00646081 /* Sources */,
 				0B5B51A21AAAEFBE00646081 /* Frameworks */,
 				0B5B51A31AAAEFBE00646081 /* Resources */,
+				0B5B51CC1AAAF09100646081 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -161,6 +197,7 @@
 				TargetAttributes = {
 					0B5B51A41AAAEFBE00646081 = {
 						CreatedOnToolsVersion = 6.1.1;
+						DevelopmentTeam = CPGTRG2F88;
 					};
 					0B5B51B91AAAEFBE00646081 = {
 						CreatedOnToolsVersion = 6.1.1;
@@ -207,6 +244,23 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		0B5B51CC1AAAF09100646081 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Carthage/Build/iOS/GPUImage.framework",
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/local/bin/carthage copy-frameworks";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		0B5B51A11AAAEFBE00646081 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -214,6 +268,7 @@
 			files = (
 				0B5B51AD1AAAEFBE00646081 /* ViewController.swift in Sources */,
 				0B5B51AB1AAAEFBE00646081 /* AppDelegate.swift in Sources */,
+				0B5B51CB1AAAF08900646081 /* ImageProcessing.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -338,9 +393,16 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = GPUImageProj/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
@@ -348,9 +410,16 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = GPUImageProj/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};
