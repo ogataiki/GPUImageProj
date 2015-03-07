@@ -55,21 +55,26 @@ class ViewController: UIViewController
             // self.showImageView.image = self.imageSource;
             
             // フィルタリングして表示
-            //self.showImageView.image = ImageProcessing.gaussianSelectiveBlurFilter(self.imageSource
-            //    , blurSize: 5.0
-            //    , radius: 0.4
-            //    , point: CGPointMake(0.5, 0.5)
-            //    , exBlurSize: 0.5
-            //    , aspectRatio: 1.0
-            //);
-            
-            self.showImageView.image = ImageProcessing.chromaKeyBlendFilter(self.imageSource
-                , overlayImage: ImageProcessing.sobelEdgeDetectionFilter(self.imageSource)
-                , thresholdSensitivity: 0.45
-                , smoothing: 0.1
+//            self.showImageView.image = ImageProcessing.gaussianSelectiveBlurFilter(self.imageSource
+//                , blurSize: 5.0
+//                , radius: 0.4
+//                , point: CGPointMake(0.5, 0.5)
+//                , exBlurSize: 0.5
+//                , aspectRatio: 1.0
+//            );
+
+//            self.showImageView.image = ImageProcessing.darkenBlendFilter(self.imageSource
+//                , overlayImage: ImageProcessing.sobelEdgeDetectionFilter(self.imageSource)
+//            );
+
+            self.showImageView.image = ImageProcessing.polkaDotFilter(self.imageSource
+                , fractionalWidthOfAPixel: 0.05
+                , dotScaling: 0.9
             );
             
         });
     }
+    
+    
 }
 

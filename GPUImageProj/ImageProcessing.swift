@@ -4,6 +4,10 @@ import GPUImage
 
 class ImageProcessing
 {
+    //
+    // original filters
+    //
+
     // フォーカスぼかし
     class func focusBlurFilter(baseImage: UIImage
         , radius: CGFloat
@@ -15,6 +19,11 @@ class ImageProcessing
         filter.excludeCirclePoint = point;
         return filter.imageByFilteringImage(baseImage);
     }
+    
+    
+    //
+    // GPUImage Originals
+    //
     
     //
     // Color adjustments
@@ -619,6 +628,11 @@ class ImageProcessing
         return filter.imageByFilteringImage(baseImage);
     }
     
+    
+    //
+    // Blending modes
+    //
+    
     // 選択的に第二の画像と最初の画像の色を置き換える
     // 同じ画像で片方に他のフィルタかけたものを使うと面白い
     class func chromaKeyBlendFilter(baseImage: UIImage
@@ -635,16 +649,317 @@ class ImageProcessing
         
         var inputPicture = GPUImagePicture(CGImage: baseImage.CGImage, smoothlyScaleOutput: true);
         var overlayPicture = GPUImagePicture(CGImage: overlayImage.CGImage, smoothlyScaleOutput: true);
-
         inputPicture.addTarget(filter);
         overlayPicture.addTarget(filter);
-
         inputPicture.processImage();
         overlayPicture.processImage();
-        
         filter.useNextFrameForImageCapture();
-        
         return filter.imageFromCurrentFramebufferWithOrientation(baseImage.imageOrientation);
+    }
+    
+    // 二つの画像の溶解合成する
+    class func dissolveBlendFilter(baseImage: UIImage
+        , overlayImage: UIImage
+        , mix: CGFloat
+        ) -> UIImage
+    {
+        // mix : 0.0 ~ 1.0 Default 0.5 どの程度上書きを強めるか
+        var filter = GPUImageDissolveBlendFilter();
+        filter.mix = mix;
+        
+        var inputPicture = GPUImagePicture(CGImage: baseImage.CGImage, smoothlyScaleOutput: true);
+        var overlayPicture = GPUImagePicture(CGImage: overlayImage.CGImage, smoothlyScaleOutput: true);
+        inputPicture.addTarget(filter);
+        overlayPicture.addTarget(filter);
+        inputPicture.processImage();
+        overlayPicture.processImage();
+        filter.useNextFrameForImageCapture();
+        return filter.imageFromCurrentFramebufferWithOrientation(baseImage.imageOrientation);
+    }
+    
+    // 二つの画像の乗算ブレンド
+    class func multiplyBlendFilter(baseImage: UIImage
+        , overlayImage: UIImage
+        ) -> UIImage
+    {
+        var filter = GPUImageMultiplyBlendFilter();
+        
+        var inputPicture = GPUImagePicture(CGImage: baseImage.CGImage, smoothlyScaleOutput: true);
+        var overlayPicture = GPUImagePicture(CGImage: overlayImage.CGImage, smoothlyScaleOutput: true);
+        inputPicture.addTarget(filter);
+        overlayPicture.addTarget(filter);
+        inputPicture.processImage();
+        overlayPicture.processImage();
+        filter.useNextFrameForImageCapture();
+        return filter.imageFromCurrentFramebufferWithOrientation(baseImage.imageOrientation);
+    }
+
+    // 二つの画像の加算ブレンド
+    class func addBlendFilter(baseImage: UIImage
+        , overlayImage: UIImage
+        ) -> UIImage
+    {
+        var filter = GPUImageAddBlendFilter();
+        
+        var inputPicture = GPUImagePicture(CGImage: baseImage.CGImage, smoothlyScaleOutput: true);
+        var overlayPicture = GPUImagePicture(CGImage: overlayImage.CGImage, smoothlyScaleOutput: true);
+        inputPicture.addTarget(filter);
+        overlayPicture.addTarget(filter);
+        inputPicture.processImage();
+        overlayPicture.processImage();
+        filter.useNextFrameForImageCapture();
+        return filter.imageFromCurrentFramebufferWithOrientation(baseImage.imageOrientation);
+    }
+    
+    // 二つの画像の分割ブレンド
+    class func divideBlendFilter(baseImage: UIImage
+        , overlayImage: UIImage
+        ) -> UIImage
+    {
+        var filter = GPUImageDivideBlendFilter();
+        
+        var inputPicture = GPUImagePicture(CGImage: baseImage.CGImage, smoothlyScaleOutput: true);
+        var overlayPicture = GPUImagePicture(CGImage: overlayImage.CGImage, smoothlyScaleOutput: true);
+        inputPicture.addTarget(filter);
+        overlayPicture.addTarget(filter);
+        inputPicture.processImage();
+        overlayPicture.processImage();
+        filter.useNextFrameForImageCapture();
+        return filter.imageFromCurrentFramebufferWithOrientation(baseImage.imageOrientation);
+    }
+
+    // 二つの画像の重ねブレンド
+    class func overlayBlendFilter(baseImage: UIImage
+        , overlayImage: UIImage
+        ) -> UIImage
+    {
+        var filter = GPUImageOverlayBlendFilter();
+        
+        var inputPicture = GPUImagePicture(CGImage: baseImage.CGImage, smoothlyScaleOutput: true);
+        var overlayPicture = GPUImagePicture(CGImage: overlayImage.CGImage, smoothlyScaleOutput: true);
+        inputPicture.addTarget(filter);
+        overlayPicture.addTarget(filter);
+        inputPicture.processImage();
+        overlayPicture.processImage();
+        filter.useNextFrameForImageCapture();
+        return filter.imageFromCurrentFramebufferWithOrientation(baseImage.imageOrientation);
+    }
+
+    // 二つの画像の各色最小値をとってブレンド
+    class func darkenBlendFilter(baseImage: UIImage
+        , overlayImage: UIImage
+        ) -> UIImage
+    {
+        var filter = GPUImageDarkenBlendFilter();
+        
+        var inputPicture = GPUImagePicture(CGImage: baseImage.CGImage, smoothlyScaleOutput: true);
+        var overlayPicture = GPUImagePicture(CGImage: overlayImage.CGImage, smoothlyScaleOutput: true);
+        inputPicture.addTarget(filter);
+        overlayPicture.addTarget(filter);
+        inputPicture.processImage();
+        overlayPicture.processImage();
+        filter.useNextFrameForImageCapture();
+        return filter.imageFromCurrentFramebufferWithOrientation(baseImage.imageOrientation);
+    }
+
+    // 二つの画像の各色最大値をとってブレンド
+    class func lightenBlendFilter(baseImage: UIImage
+        , overlayImage: UIImage
+        ) -> UIImage
+    {
+        var filter = GPUImageLightenBlendFilter();
+        
+        var inputPicture = GPUImagePicture(CGImage: baseImage.CGImage, smoothlyScaleOutput: true);
+        var overlayPicture = GPUImagePicture(CGImage: overlayImage.CGImage, smoothlyScaleOutput: true);
+        inputPicture.addTarget(filter);
+        overlayPicture.addTarget(filter);
+        inputPicture.processImage();
+        overlayPicture.processImage();
+        filter.useNextFrameForImageCapture();
+        return filter.imageFromCurrentFramebufferWithOrientation(baseImage.imageOrientation);
+    }
+
+    // 二つの画像の焼き込みブレンド
+    class func colorBurnBlendFilter(baseImage: UIImage
+        , overlayImage: UIImage
+        ) -> UIImage
+    {
+        var filter = GPUImageColorBurnBlendFilter();
+        
+        var inputPicture = GPUImagePicture(CGImage: baseImage.CGImage, smoothlyScaleOutput: true);
+        var overlayPicture = GPUImagePicture(CGImage: overlayImage.CGImage, smoothlyScaleOutput: true);
+        inputPicture.addTarget(filter);
+        overlayPicture.addTarget(filter);
+        inputPicture.processImage();
+        overlayPicture.processImage();
+        filter.useNextFrameForImageCapture();
+        return filter.imageFromCurrentFramebufferWithOrientation(baseImage.imageOrientation);
+    }
+
+    // 二つの画像の覆い焼きブレンド
+    class func colorDodgeBlendFilter(baseImage: UIImage
+        , overlayImage: UIImage
+        ) -> UIImage
+    {
+        var filter = GPUImageColorDodgeBlendFilter();
+        
+        var inputPicture = GPUImagePicture(CGImage: baseImage.CGImage, smoothlyScaleOutput: true);
+        var overlayPicture = GPUImagePicture(CGImage: overlayImage.CGImage, smoothlyScaleOutput: true);
+        inputPicture.addTarget(filter);
+        overlayPicture.addTarget(filter);
+        inputPicture.processImage();
+        overlayPicture.processImage();
+        filter.useNextFrameForImageCapture();
+        return filter.imageFromCurrentFramebufferWithOrientation(baseImage.imageOrientation);
+    }
+
+    // 二つの画像のスクリーンブレンド
+    class func screenBlendFilter(baseImage: UIImage
+        , overlayImage: UIImage
+        ) -> UIImage
+    {
+        var filter = GPUImageScreenBlendFilter();
+        
+        var inputPicture = GPUImagePicture(CGImage: baseImage.CGImage, smoothlyScaleOutput: true);
+        var overlayPicture = GPUImagePicture(CGImage: overlayImage.CGImage, smoothlyScaleOutput: true);
+        inputPicture.addTarget(filter);
+        overlayPicture.addTarget(filter);
+        inputPicture.processImage();
+        overlayPicture.processImage();
+        filter.useNextFrameForImageCapture();
+        return filter.imageFromCurrentFramebufferWithOrientation(baseImage.imageOrientation);
+    }
+    
+    // 二つの画像の排他ブレンド
+    class func exclusionBlendFilter(baseImage: UIImage
+        , overlayImage: UIImage
+        ) -> UIImage
+    {
+        var filter = GPUImageExclusionBlendFilter();
+        
+        var inputPicture = GPUImagePicture(CGImage: baseImage.CGImage, smoothlyScaleOutput: true);
+        var overlayPicture = GPUImagePicture(CGImage: overlayImage.CGImage, smoothlyScaleOutput: true);
+        inputPicture.addTarget(filter);
+        overlayPicture.addTarget(filter);
+        inputPicture.processImage();
+        overlayPicture.processImage();
+        filter.useNextFrameForImageCapture();
+        return filter.imageFromCurrentFramebufferWithOrientation(baseImage.imageOrientation);
+    }
+
+    // 二つの画像の差分ブレンド
+    class func differenceBlendFilter(baseImage: UIImage
+        , overlayImage: UIImage
+        ) -> UIImage
+    {
+        var filter = GPUImageDifferenceBlendFilter();
+        
+        var inputPicture = GPUImagePicture(CGImage: baseImage.CGImage, smoothlyScaleOutput: true);
+        var overlayPicture = GPUImagePicture(CGImage: overlayImage.CGImage, smoothlyScaleOutput: true);
+        inputPicture.addTarget(filter);
+        overlayPicture.addTarget(filter);
+        inputPicture.processImage();
+        overlayPicture.processImage();
+        filter.useNextFrameForImageCapture();
+        return filter.imageFromCurrentFramebufferWithOrientation(baseImage.imageOrientation);
+    }
+
+    // 二つの画像のハード光?ブレンド
+    class func hardLightBlendFilter(baseImage: UIImage
+        , overlayImage: UIImage
+        ) -> UIImage
+    {
+        var filter = GPUImageHardLightBlendFilter();
+        
+        var inputPicture = GPUImagePicture(CGImage: baseImage.CGImage, smoothlyScaleOutput: true);
+        var overlayPicture = GPUImagePicture(CGImage: overlayImage.CGImage, smoothlyScaleOutput: true);
+        inputPicture.addTarget(filter);
+        overlayPicture.addTarget(filter);
+        inputPicture.processImage();
+        overlayPicture.processImage();
+        filter.useNextFrameForImageCapture();
+        return filter.imageFromCurrentFramebufferWithOrientation(baseImage.imageOrientation);
+    }
+
+    // 二つの画像のソフト光?ブレンド
+    class func softLightBlendFilter(baseImage: UIImage
+        , overlayImage: UIImage
+        ) -> UIImage
+    {
+        var filter = GPUImageSoftLightBlendFilter();
+        
+        var inputPicture = GPUImagePicture(CGImage: baseImage.CGImage, smoothlyScaleOutput: true);
+        var overlayPicture = GPUImagePicture(CGImage: overlayImage.CGImage, smoothlyScaleOutput: true);
+        inputPicture.addTarget(filter);
+        overlayPicture.addTarget(filter);
+        inputPicture.processImage();
+        overlayPicture.processImage();
+        filter.useNextFrameForImageCapture();
+        return filter.imageFromCurrentFramebufferWithOrientation(baseImage.imageOrientation);
+    }
+
+    // 二つの画像のアルファブレンド
+    class func alphaBlendFilter(baseImage: UIImage
+        , overlayImage: UIImage
+        , mix: CGFloat
+        ) -> UIImage
+    {
+        // mix : 0.0 ~ 1.0 Default 1.0
+        var filter = GPUImageAlphaBlendFilter();
+        filter.mix = mix;
+        
+        var inputPicture = GPUImagePicture(CGImage: baseImage.CGImage, smoothlyScaleOutput: true);
+        var overlayPicture = GPUImagePicture(CGImage: overlayImage.CGImage, smoothlyScaleOutput: true);
+        inputPicture.addTarget(filter);
+        overlayPicture.addTarget(filter);
+        inputPicture.processImage();
+        overlayPicture.processImage();
+        filter.useNextFrameForImageCapture();
+        return filter.imageFromCurrentFramebufferWithOrientation(baseImage.imageOrientation);
+    }
+    
+    
+    //
+    // Visual effects
+    //
+    
+    // ピクセレート(ドット絵とかモザイクみたいな)フィルタ
+    class func pixellateFilter(baseImage: UIImage
+        , fractionalWidthOfAPixel: CGFloat
+        ) -> UIImage
+    {
+        // fractionalWidthOfAPixel : 0.0 ~ 1.0 Default 0.05 ドットの荒さ 0.05は結構荒い
+        var filter = GPUImagePixellateFilter();
+        filter.fractionalWidthOfAPixel = fractionalWidthOfAPixel;
+        return filter.imageByFilteringImage(baseImage);
+    }
+
+    // 集中線みたいな形でのピクセレートフィルタ
+    class func polarPixellateFilter(baseImage: UIImage
+        , center: CGPoint
+        , pixelSize: CGSize
+        ) -> UIImage
+    {
+        // center : 0.0 ~ 1.0 集中線の中心点
+        // pixelSize : 0.0 ~ 1.0 くらい　ドットの荒さ
+        var filter = GPUImagePolarPixellateFilter();
+        filter.center = center;
+        filter.pixelSize = pixelSize;
+        return filter.imageByFilteringImage(baseImage);
+    }
+    
+    // ピクセレートの各ドット領域を丸ドットにするフィルタ
+    class func polkaDotFilter(baseImage: UIImage
+        , fractionalWidthOfAPixel: CGFloat
+        , dotScaling: CGFloat
+        ) -> UIImage
+    {
+        // fractionalWidthOfAPixel : 0.0 ~ 1.0 Default 0.05 ドットの荒さ 0.05は結構荒い
+        // dotScaling : 0.0 ~ 1.0 Default 0.9 ドットのどれくらいを使用して丸にするか
+        var filter = GPUImagePolkaDotFilter();
+        filter.fractionalWidthOfAPixel = fractionalWidthOfAPixel;
+        filter.dotScaling = dotScaling;
+        return filter.imageByFilteringImage(baseImage);
     }
 
 }
