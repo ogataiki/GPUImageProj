@@ -20,9 +20,14 @@ class ImageProcessing
         return filter.imageByFilteringImage(baseImage);
     }
     
+    // アニメスタイル
+//    class func animeStyleFilter(baseImage: UIImage
+//        ) -> UIImage
+//    {
+//    }
     
     //
-    // GPUImage Originals
+    // GPUImage how to use
     //
     
     //
@@ -109,7 +114,7 @@ class ImageProcessing
         , hue: CGFloat
         ) -> UIImage
     {
-        // red,green,blue : 0.0 ~ 1.0
+        // hue : 180で逆になる？
         var filter = GPUImageHueFilter();
         filter.hue = hue;
         return filter.imageByFilteringImage(baseImage);
@@ -219,20 +224,29 @@ class ImageProcessing
         return filter.imageByFilteringImage(baseImage);
     }
     
-    // 不明
+    // 選択的に第二の画像と最初の画像の色を透明にする
     class func chromaKeyFilter(baseImage: UIImage
+        , overlayImage: UIImage
         , thresholdSensitivity: CGFloat
         , smoothing: CGFloat
         ) -> UIImage
     {
         // 画像内の指定された色については、これはGPUImageChromaKeyBlendFilterに類似して0にするアルファチャンネルを設定するだけの代わりに、
         // これは単に第二の画像を取り込むとしないマッチング色について第二の画像にブレンディングの所与の色を透明に変わり。
-        // thresholdSensitivity : Default 0.4
-        // smoothing : Default 0.1
+        // thresholdSensitivity : Default 0.4 どれだけの近さを対象にするか
+        // smoothing : Default 0.1 どのくらいスムーズに色変えするか
         var filter = GPUImageChromaKeyFilter();
         filter.thresholdSensitivity = thresholdSensitivity;
         filter.smoothing = smoothing;
-        return filter.imageByFilteringImage(baseImage);
+        
+        var inputPicture = GPUImagePicture(CGImage: baseImage.CGImage, smoothlyScaleOutput: true);
+        var overlayPicture = GPUImagePicture(CGImage: overlayImage.CGImage, smoothlyScaleOutput: true);
+        inputPicture.addTarget(filter);
+        overlayPicture.addTarget(filter);
+        inputPicture.processImage();
+        overlayPicture.processImage();
+        filter.useNextFrameForImageCapture();
+        return filter.imageFromCurrentFramebufferWithOrientation(baseImage.imageOrientation);
     }
 
 
@@ -403,8 +417,8 @@ class ImageProcessing
         , texelHeight: CGFloat
         ) -> UIImage
     {
-        // texelWidth : 0.01くらいが丁度いい
-        // texelHeight : 0.01くらいが丁度いい
+        // texelWidth : 0.001くらいが丁度いい
+        // texelHeight : 0.001くらいが丁度いい
         var filter = GPUImageSobelEdgeDetectionFilter();
         filter.texelWidth = texelWidth;
         filter.texelHeight = texelHeight;
@@ -962,5 +976,201 @@ class ImageProcessing
         return filter.imageByFilteringImage(baseImage);
     }
 
+    // ハーフトーンフィルタ(なんか、黒い点々になる)
+    class func halftoneFilter(baseImage: UIImage
+        , fractionalWidthOfAPixel: CGFloat
+        ) -> UIImage
+    {
+        // fractionalWidthOfAPixel : 0.0 ~ 1.0 Default 0.05 ドットの荒さ 0.05は結構荒い
+        var filter = GPUImageHalftoneFilter();
+        filter.fractionalWidthOfAPixel = fractionalWidthOfAPixel;
+        return filter.imageByFilteringImage(baseImage);
+    }
+
+    // クロスハッチフィルタ
+    class func crosshatchFilter(baseImage: UIImage
+        , crossHatchSpacing: CGFloat
+        , lineWidth: CGFloat
+        ) -> UIImage
+    {
+        // crossHatchSpacing : Default 0.03 格子の密度
+        // lineWidth : Default 0.003 格子の幅
+        var filter = GPUImageCrosshatchFilter();
+        filter.crossHatchSpacing = crossHatchSpacing;
+        filter.lineWidth = lineWidth;
+        return filter.imageByFilteringImage(baseImage);
+    }
+    
+    // スケッチフィルタ
+    class func sketchFilter(baseImage: UIImage
+        , texelWidth: CGFloat
+        , texelHeight: CGFloat
+        ) -> UIImage
+    {
+        // texelWidth : 0.0005
+        // texelHeight : 0.0005
+        var filter = GPUImageSketchFilter();
+        filter.texelWidth = texelWidth;
+        filter.texelHeight = texelHeight;
+        return filter.imageByFilteringImage(baseImage);
+    }
+
+    // 漫画フィルタ
+    class func toonFilter(baseImage: UIImage
+        , texelWidth: CGFloat
+        , texelHeight: CGFloat
+        , threshold: CGFloat
+        , quantizationLevels: CGFloat
+        ) -> UIImage
+    {
+        // texelWidth : 0.0005
+        // texelHeight : 0.0005
+        // threshold : 0.0 ~ 1.0 Default 0.2 ソーベルフィルタの感度
+        // quantizationLevels : Default 10.0 最終的なカラーレベル
+        var filter = GPUImageToonFilter();
+        filter.texelWidth = texelWidth;
+        filter.texelHeight = texelHeight;
+        filter.threshold = threshold;
+        filter.quantizationLevels = quantizationLevels;
+        return filter.imageByFilteringImage(baseImage);
+    }
+    
+    
+    // ノイズ低減漫画フィルタ
+    class func smoothToonFilter(baseImage: UIImage
+        , texelWidth: CGFloat
+        , texelHeight: CGFloat
+        , blurSize: CGFloat
+        , threshold: CGFloat
+        , quantizationLevels: CGFloat
+        ) -> UIImage
+    {
+        // texelWidth : 0.0005
+        // texelHeight : 0.0005
+        // blurSize : 0.0 ~ Default 0.5 ノイズ低減のぼかし度合い
+        // threshold : 0.0 ~ 1.0 Default 0.2 ソーベルフィルタの感度
+        // quantizationLevels : Default 10.0 最終的なカラーレベル
+        var filter = GPUImageSmoothToonFilter();
+        filter.texelWidth = texelWidth;
+        filter.texelHeight = texelHeight;
+        filter.threshold = threshold;
+        filter.quantizationLevels = quantizationLevels;
+        return filter.imageByFilteringImage(baseImage);
+    }
+
+    // エンボスフィルタ
+    class func embossFilter(baseImage: UIImage
+        , intensity: CGFloat
+        ) -> UIImage
+    {
+        // intensity : 0.0 ~ 4.0 Default 1.0
+        var filter = GPUImageEmbossFilter();
+        filter.intensity = intensity;
+        return filter.imageByFilteringImage(baseImage);
+    }
+
+    // ポスタライズ
+    class func posterizeFilter(baseImage: UIImage
+        , colorLevels: UInt
+        ) -> UIImage
+    {
+        // colorLevels : 1 ~ 256 Default 10
+        var filter = GPUImagePosterizeFilter();
+        filter.colorLevels = colorLevels;
+        return filter.imageByFilteringImage(baseImage);
+    }
+    
+    // 渦巻き歪みフィルタ
+    class func swirlFilter(baseImage: UIImage
+        , radius: CGFloat
+        , center: CGPoint
+        , angle: CGFloat
+        ) -> UIImage
+    {
+        // radius : Default 0.5
+        // center : (0.0, 0,0) ~ (1.0, 1.0)
+        // angle : Default 1.0
+        var filter = GPUImageSwirlFilter();
+        filter.radius = radius;
+        filter.center = center;
+        filter.angle = angle;
+        return filter.imageByFilteringImage(baseImage);
+    }
+
+    // 膨らみ歪みフィルタ
+    class func bulgeDistortionFilter(baseImage: UIImage
+        , radius: CGFloat
+        , center: CGPoint
+        , scale: CGFloat
+        ) -> UIImage
+    {
+        // radius : Default 0.25
+        // center : (0.0, 0,0) ~ (1.0, 1.0)
+        // scale : -1.0 ~ 1.0 Default 0.5
+        var filter = GPUImageBulgeDistortionFilter();
+        filter.radius = radius;
+        filter.center = center;
+        filter.scale = scale;
+        return filter.imageByFilteringImage(baseImage);
+    }
+
+    // 挟み込み歪みフィルタ
+    class func pinchDistortionFilter(baseImage: UIImage
+        , radius: CGFloat
+        , center: CGPoint
+        , scale: CGFloat
+        ) -> UIImage
+    {
+        // radius : Default 1.0
+        // center : (0.0, 0,0) ~ (1.0, 1.0)
+        // scale : -2.0 ~ 2.0 Default 1.0
+        var filter = GPUImagePinchDistortionFilter();
+        filter.radius = radius;
+        filter.center = center;
+        filter.scale = scale;
+        return filter.imageByFilteringImage(baseImage);
+    }
+
+    // 伸縮歪みフィルタ
+    class func stretchDistortionFilter(baseImage: UIImage
+        , center: CGPoint
+        ) -> UIImage
+    {
+        // center : (0.0, 0,0) ~ (1.0, 1.0)
+        var filter = GPUImageStretchDistortionFilter();
+        filter.center = center;
+        return filter.imageByFilteringImage(baseImage);
+    }
+    
+    // 指定した色で外側から侵食するふんわりフレーム的なフィルタ
+    class func vignetteFilter(baseImage: UIImage
+        , vignetteCenter: CGPoint
+        , vignetteColor: GPUVector3
+        , vignetteStart: CGFloat
+        , vignetteEnd: CGFloat
+        ) -> UIImage
+    {
+        // vignetteCenter : (0.0, 0.0) ~ (1.0, 1.0) どこに向かって侵食するか
+        // vignetteColor : GPUVector3(one: 1.0, two: 1.0, three: 1.0)で白
+        // vignetteStart : 0.1 くらいがちょうどよかった
+        // vignetteEnd : 0.4 くらいがちょうどよかった
+        var filter = GPUImageVignetteFilter();
+        filter.vignetteCenter = vignetteCenter;
+        filter.vignetteColor = vignetteColor;
+        filter.vignetteStart = vignetteStart;
+        filter.vignetteEnd = vignetteEnd;
+        return filter.imageByFilteringImage(baseImage);
+    }
+
+    // 質のいいポスタライズみたいな
+    class func kuwaharaFilter(baseImage: UIImage
+        , radius: UInt
+        ) -> UIImage
+    {
+        // radius : Default 4
+        var filter = GPUImageKuwaharaFilter();
+        filter.radius = radius;
+        return filter.imageByFilteringImage(baseImage);
+    }
 }
 

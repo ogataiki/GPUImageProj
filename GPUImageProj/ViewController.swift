@@ -67,10 +67,8 @@ class ViewController: UIViewController
 //                , overlayImage: ImageProcessing.sobelEdgeDetectionFilter(self.imageSource)
 //            );
 
-            self.showImageView.image = ImageProcessing.polkaDotFilter(self.imageSource
-                , fractionalWidthOfAPixel: 0.05
-                , dotScaling: 0.9
-            );
+//            self.showImageView.image = ImageProcessing.animeStyleFilter(self.imageSource
+//            );
             
         });
     }
