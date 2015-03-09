@@ -44,6 +44,15 @@ class ViewController: UIViewController
         
     }
     
+    @IBAction func filtersSelectAction(sender: UIBarButtonItem) {
+        
+        // フィルタ選択
+        var selectView = self.storyboard?.instantiateViewControllerWithIdentifier("SelectFilterVC") as UIViewController;
+        self.presentViewController(selectView, animated: true, completion: { () -> Void in
+            
+        })
+    }
+    
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [NSObject : AnyObject]) {
         
         let dic: NSDictionary = info;
@@ -52,7 +61,14 @@ class ViewController: UIViewController
         self.dismissViewControllerAnimated(true, completion: { () -> Void in
             
             // そのまま表示
-            // self.showImageView.image = self.imageSource;
+            self.showImageView.image = self.imageSource;
+            
+            // フィルタ選択
+            var selectView = self.storyboard?.instantiateViewControllerWithIdentifier("SelectFilterVC") as UIViewController;
+            self.presentViewController(selectView, animated: true, completion: { () -> Void in
+                
+            })
+
             
             // フィルタリングして表示
 //            self.showImageView.image = ImageProcessing.gaussianSelectiveBlurFilter(self.imageSource

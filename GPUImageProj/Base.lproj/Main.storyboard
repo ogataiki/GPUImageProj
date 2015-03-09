@@ -7,7 +7,7 @@
         <!--View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="GPUImageProj" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="MainVC" id="BYZ-38-t0r" customClass="ViewController" customModule="GPUImageProj" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
@@ -24,22 +24,29 @@
                                             <action selector="pickImageAction:" destination="BYZ-38-t0r" id="u12-Rw-l6g"/>
                                         </connections>
                                     </barButtonItem>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="iQy-xp-DEU"/>
+                                    <barButtonItem title="Filters" id="ZUS-AA-Lmt">
+                                        <connections>
+                                            <action selector="filtersSelectAction:" destination="BYZ-38-t0r" id="VAR-Np-Qv0"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="yyE-6s-3IY"/>
                                 </items>
                             </toolbar>
                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="zA4-kz-tal">
-                                <rect key="frame" x="0.0" y="0.0" width="600" height="556"/>
+                                <rect key="frame" x="0.0" y="20" width="600" height="536"/>
                             </imageView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstAttribute="trailing" secondItem="fEg-bx-DwT" secondAttribute="trailing" id="AUr-Qk-lRn"/>
-                            <constraint firstItem="zA4-kz-tal" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="Rsa-V1-Xav"/>
-                            <constraint firstAttribute="trailing" secondItem="zA4-kz-tal" secondAttribute="trailing" id="S6k-Tp-Ie5"/>
-                            <constraint firstItem="fEg-bx-DwT" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="TYz-7F-3ea"/>
-                            <constraint firstItem="fEg-bx-DwT" firstAttribute="top" secondItem="zA4-kz-tal" secondAttribute="bottom" id="U9b-7y-hcE"/>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="fEg-bx-DwT" secondAttribute="bottom" id="bXC-j6-Ykp"/>
-                            <constraint firstItem="zA4-kz-tal" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="x53-n3-nTb"/>
-                            <constraint firstItem="fEg-bx-DwT" firstAttribute="top" secondItem="zA4-kz-tal" secondAttribute="bottom" id="x9i-58-YHp"/>
+                            <constraint firstItem="fEg-bx-DwT" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="5Xg-S8-rC8"/>
+                            <constraint firstAttribute="trailing" secondItem="zA4-kz-tal" secondAttribute="trailing" id="YvG-zE-xub"/>
+                            <constraint firstItem="zA4-kz-tal" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="gVy-Pt-TV6"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="fEg-bx-DwT" secondAttribute="bottom" id="gid-JS-OZD"/>
+                            <constraint firstItem="fEg-bx-DwT" firstAttribute="top" secondItem="zA4-kz-tal" secondAttribute="bottom" id="n98-hM-Zpy"/>
+                            <constraint firstItem="fEg-bx-DwT" firstAttribute="top" secondItem="zA4-kz-tal" secondAttribute="bottom" id="oqW-23-ZPN"/>
+                            <constraint firstAttribute="trailing" secondItem="fEg-bx-DwT" secondAttribute="trailing" id="pl8-g0-OgR"/>
+                            <constraint firstItem="zA4-kz-tal" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="sQe-Pk-oG4"/>
                         </constraints>
                     </view>
                     <connections>
@@ -48,6 +55,69 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
+        </scene>
+        <!--Select FilterVC-->
+        <scene sceneID="pLF-Cc-Nd7">
+            <objects>
+                <viewController storyboardIdentifier="SelectFilterVC" id="fwm-0K-Zrg" customClass="SelectFilterVC" customModule="GPUImageProj" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="BX1-oG-cae"/>
+                        <viewControllerLayoutGuide type="bottom" id="oBc-oJ-I1a"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="aLs-QV-LLA">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="NiQ-NQ-y9g">
+                                <rect key="frame" x="0.0" y="64" width="600" height="492"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </tableView>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Dve-kH-fTT">
+                                <rect key="frame" x="0.0" y="556" width="600" height="44"/>
+                                <items>
+                                    <barButtonItem systemItem="cancel" id="2D0-B7-Zjy">
+                                        <connections>
+                                            <action selector="SelectedCancel:" destination="fwm-0K-Zrg" id="RpP-qZ-HKp"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="6kz-60-clV"/>
+                                    <barButtonItem systemItem="done" id="3SP-mF-JIt">
+                                        <connections>
+                                            <action selector="SelectedFilter:" destination="fwm-0K-Zrg" id="aqa-Yw-aEf"/>
+                                        </connections>
+                                    </barButtonItem>
+                                </items>
+                            </toolbar>
+                            <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MP1-wV-iWW">
+                                <rect key="frame" x="0.0" y="20" width="600" height="44"/>
+                                <items>
+                                    <navigationItem title="Title" id="EZL-4j-fRK"/>
+                                </items>
+                            </navigationBar>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="MP1-wV-iWW" firstAttribute="leading" secondItem="aLs-QV-LLA" secondAttribute="leading" id="9Qb-kp-G99"/>
+                            <constraint firstItem="oBc-oJ-I1a" firstAttribute="top" secondItem="Dve-kH-fTT" secondAttribute="bottom" id="Dc5-Fy-xWK"/>
+                            <constraint firstItem="NiQ-NQ-y9g" firstAttribute="top" secondItem="MP1-wV-iWW" secondAttribute="bottom" id="GhV-aI-Jnu"/>
+                            <constraint firstItem="NiQ-NQ-y9g" firstAttribute="top" secondItem="MP1-wV-iWW" secondAttribute="bottom" id="Idq-GD-m92"/>
+                            <constraint firstItem="MP1-wV-iWW" firstAttribute="top" secondItem="BX1-oG-cae" secondAttribute="bottom" id="IsS-1Y-STC"/>
+                            <constraint firstAttribute="trailing" secondItem="Dve-kH-fTT" secondAttribute="trailing" id="JIf-i3-hk2"/>
+                            <constraint firstAttribute="trailing" secondItem="MP1-wV-iWW" secondAttribute="trailing" id="SEy-Dt-k1s"/>
+                            <constraint firstItem="Dve-kH-fTT" firstAttribute="top" secondItem="NiQ-NQ-y9g" secondAttribute="bottom" id="WKS-Q9-O1w"/>
+                            <constraint firstItem="Dve-kH-fTT" firstAttribute="leading" secondItem="aLs-QV-LLA" secondAttribute="leading" id="ZLu-2C-e4h"/>
+                            <constraint firstItem="NiQ-NQ-y9g" firstAttribute="leading" secondItem="aLs-QV-LLA" secondAttribute="leading" id="d7b-P4-FF5"/>
+                            <constraint firstAttribute="trailing" secondItem="NiQ-NQ-y9g" secondAttribute="trailing" id="jbM-aL-SHX"/>
+                            <constraint firstItem="Dve-kH-fTT" firstAttribute="top" secondItem="NiQ-NQ-y9g" secondAttribute="bottom" id="sqB-ad-42m"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="filtersTableView" destination="NiQ-NQ-y9g" id="Z99-c3-aSP"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="3W9-xR-fzp" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="995" y="349"/>
         </scene>
     </scenes>
 </document>
