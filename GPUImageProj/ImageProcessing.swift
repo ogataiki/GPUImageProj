@@ -61,8 +61,23 @@ class ImageProcessing
     class var BLENDFILTERS : [String] {
         struct Static {
             static let strings : [String] = [
-                "a"
-                , "b"
+                "chromaKey (選択透明)"
+                , "chromaKeyBlend (選択色置換)"
+                , "dissolveBlend (融解合成)"
+                , "multiplyBlend (乗算合成)"
+                , "addBlend (加算合成)"
+                , "divideBlend (分割合成)"
+                , "overlayBlend (重ね合成)"
+                , "darkenBlend (最小値合成)"
+                , "lightenBlend (最大値合成)"
+                , "colorBurnBlend (焼き込み合成)"
+                , "colorDodgeBlend (覆い焼き合成)"
+                , "screenBlend (スクリーン合成)"
+                , "exclusionBlend (排他合成)"
+                , "differenceBlend (差分合成)"
+                , "hardLightBlend (?)"
+                , "softLightBlend (?)"
+                , "alphaBlend (透明度合成)"
             ];
         }
         return Static.strings;
@@ -70,8 +85,22 @@ class ImageProcessing
     class var VISUALEFFECTFILTERS : [String] {
         struct Static {
             static let strings : [String] = [
-                "a"
-                , "b"
+                "pixellate (ドット絵とかモザイク)"
+                , "polarPixellate (集中線的なpixellate)"
+                , "polkaDot (丸ドット化)"
+                , "halftone (ハーフトーン)"
+                , "crosshatch (クロスハッチ)"
+                , "sketch (スケッチ)"
+                , "toon (漫画)"
+                , "smoothToon (ノイズ低減漫画)"
+                , "emboss (エンボス)"
+                , "posterize (色減少)"
+                , "swirl (渦巻き歪み)"
+                , "bulgeDistortion (膨らみ歪み)"
+                , "pinchDistortion (挟み込み歪み)"
+                , "stretchDistortion (伸縮歪み)"
+                , "vignette (ふんわりフレーム)"
+                , "kuwahara (質のいい減色的な)"
             ];
         }
         return Static.strings;
@@ -828,6 +857,21 @@ class ImageProcessing
     // 選択的に第二の画像と最初の画像の色を透明にする
     class func chromaKeyFilter(baseImage: UIImage
         , overlayImage: UIImage
+        ) -> UIImage
+    {
+        var filter = GPUImageChromaKeyFilter();
+        
+        var inputPicture = GPUImagePicture(CGImage: baseImage.CGImage, smoothlyScaleOutput: true);
+        var overlayPicture = GPUImagePicture(CGImage: overlayImage.CGImage, smoothlyScaleOutput: true);
+        inputPicture.addTarget(filter);
+        overlayPicture.addTarget(filter);
+        inputPicture.processImage();
+        overlayPicture.processImage();
+        filter.useNextFrameForImageCapture();
+        return filter.imageFromCurrentFramebufferWithOrientation(baseImage.imageOrientation);
+    }
+    class func chromaKeyFilter(baseImage: UIImage
+        , overlayImage: UIImage
         , thresholdSensitivity: CGFloat
         , smoothing: CGFloat
         ) -> UIImage
@@ -854,6 +898,21 @@ class ImageProcessing
     // 同じ画像で片方に他のフィルタかけたものを使うと面白い
     class func chromaKeyBlendFilter(baseImage: UIImage
         , overlayImage: UIImage
+        ) -> UIImage
+    {
+        var filter = GPUImageChromaKeyBlendFilter();
+        
+        var inputPicture = GPUImagePicture(CGImage: baseImage.CGImage, smoothlyScaleOutput: true);
+        var overlayPicture = GPUImagePicture(CGImage: overlayImage.CGImage, smoothlyScaleOutput: true);
+        inputPicture.addTarget(filter);
+        overlayPicture.addTarget(filter);
+        inputPicture.processImage();
+        overlayPicture.processImage();
+        filter.useNextFrameForImageCapture();
+        return filter.imageFromCurrentFramebufferWithOrientation(baseImage.imageOrientation);
+    }
+    class func chromaKeyBlendFilter(baseImage: UIImage
+        , overlayImage: UIImage
         , thresholdSensitivity: CGFloat
         , smoothing: CGFloat
         ) -> UIImage
@@ -875,6 +934,21 @@ class ImageProcessing
     }
     
     // 二つの画像の溶解合成する
+    class func dissolveBlendFilter(baseImage: UIImage
+        , overlayImage: UIImage
+        ) -> UIImage
+    {
+        var filter = GPUImageDissolveBlendFilter();
+        
+        var inputPicture = GPUImagePicture(CGImage: baseImage.CGImage, smoothlyScaleOutput: true);
+        var overlayPicture = GPUImagePicture(CGImage: overlayImage.CGImage, smoothlyScaleOutput: true);
+        inputPicture.addTarget(filter);
+        overlayPicture.addTarget(filter);
+        inputPicture.processImage();
+        overlayPicture.processImage();
+        filter.useNextFrameForImageCapture();
+        return filter.imageFromCurrentFramebufferWithOrientation(baseImage.imageOrientation);
+    }
     class func dissolveBlendFilter(baseImage: UIImage
         , overlayImage: UIImage
         , mix: CGFloat
@@ -1118,6 +1192,21 @@ class ImageProcessing
     // 二つの画像のアルファブレンド
     class func alphaBlendFilter(baseImage: UIImage
         , overlayImage: UIImage
+        ) -> UIImage
+    {
+        var filter = GPUImageAlphaBlendFilter();
+        
+        var inputPicture = GPUImagePicture(CGImage: baseImage.CGImage, smoothlyScaleOutput: true);
+        var overlayPicture = GPUImagePicture(CGImage: overlayImage.CGImage, smoothlyScaleOutput: true);
+        inputPicture.addTarget(filter);
+        overlayPicture.addTarget(filter);
+        inputPicture.processImage();
+        overlayPicture.processImage();
+        filter.useNextFrameForImageCapture();
+        return filter.imageFromCurrentFramebufferWithOrientation(baseImage.imageOrientation);
+    }
+    class func alphaBlendFilter(baseImage: UIImage
+        , overlayImage: UIImage
         , mix: CGFloat
         ) -> UIImage
     {
@@ -1141,6 +1230,10 @@ class ImageProcessing
     //
     
     // ピクセレート(ドット絵とかモザイクみたいな)フィルタ
+    class func pixellateFilter(baseImage: UIImage) -> UIImage
+    {
+        return GPUImagePixellateFilter().imageByFilteringImage(baseImage);
+    }
     class func pixellateFilter(baseImage: UIImage
         , fractionalWidthOfAPixel: CGFloat
         ) -> UIImage
@@ -1152,6 +1245,10 @@ class ImageProcessing
     }
 
     // 集中線みたいな形でのピクセレートフィルタ
+    class func polarPixellateFilter(baseImage: UIImage) -> UIImage
+    {
+        return GPUImagePolarPixellateFilter().imageByFilteringImage(baseImage);
+    }
     class func polarPixellateFilter(baseImage: UIImage
         , center: CGPoint
         , pixelSize: CGSize
@@ -1166,6 +1263,10 @@ class ImageProcessing
     }
     
     // ピクセレートの各ドット領域を丸ドットにするフィルタ
+    class func polkaDotFilter(baseImage: UIImage) -> UIImage
+    {
+        return GPUImagePolkaDotFilter().imageByFilteringImage(baseImage);
+    }
     class func polkaDotFilter(baseImage: UIImage
         , fractionalWidthOfAPixel: CGFloat
         , dotScaling: CGFloat
@@ -1180,6 +1281,10 @@ class ImageProcessing
     }
 
     // ハーフトーンフィルタ(なんか、黒い点々になる)
+    class func halftoneFilter(baseImage: UIImage) -> UIImage
+    {
+        return GPUImageHalftoneFilter().imageByFilteringImage(baseImage);
+    }
     class func halftoneFilter(baseImage: UIImage
         , fractionalWidthOfAPixel: CGFloat
         ) -> UIImage
@@ -1191,6 +1296,10 @@ class ImageProcessing
     }
 
     // クロスハッチフィルタ
+    class func crosshatchFilter(baseImage: UIImage) -> UIImage
+    {
+        return GPUImageCrosshatchFilter().imageByFilteringImage(baseImage);
+    }
     class func crosshatchFilter(baseImage: UIImage
         , crossHatchSpacing: CGFloat
         , lineWidth: CGFloat
@@ -1205,6 +1314,10 @@ class ImageProcessing
     }
     
     // スケッチフィルタ
+    class func sketchFilter(baseImage: UIImage) -> UIImage
+    {
+        return GPUImageSketchFilter().imageByFilteringImage(baseImage);
+    }
     class func sketchFilter(baseImage: UIImage
         , texelWidth: CGFloat
         , texelHeight: CGFloat
@@ -1219,6 +1332,10 @@ class ImageProcessing
     }
 
     // 漫画フィルタ
+    class func toonFilter(baseImage: UIImage) -> UIImage
+    {
+        return GPUImageToonFilter().imageByFilteringImage(baseImage);
+    }
     class func toonFilter(baseImage: UIImage
         , texelWidth: CGFloat
         , texelHeight: CGFloat
@@ -1240,6 +1357,10 @@ class ImageProcessing
     
     
     // ノイズ低減漫画フィルタ
+    class func smoothToonFilter(baseImage: UIImage) -> UIImage
+    {
+        return GPUImageSmoothToonFilter().imageByFilteringImage(baseImage);
+    }
     class func smoothToonFilter(baseImage: UIImage
         , texelWidth: CGFloat
         , texelHeight: CGFloat
@@ -1262,6 +1383,10 @@ class ImageProcessing
     }
 
     // エンボスフィルタ
+    class func embossFilter(baseImage: UIImage) -> UIImage
+    {
+        return GPUImageEmbossFilter().imageByFilteringImage(baseImage);
+    }
     class func embossFilter(baseImage: UIImage
         , intensity: CGFloat
         ) -> UIImage
@@ -1273,6 +1398,10 @@ class ImageProcessing
     }
 
     // ポスタライズ
+    class func posterizeFilter(baseImage: UIImage) -> UIImage
+    {
+        return GPUImagePosterizeFilter().imageByFilteringImage(baseImage);
+    }
     class func posterizeFilter(baseImage: UIImage
         , colorLevels: UInt
         ) -> UIImage
@@ -1284,6 +1413,10 @@ class ImageProcessing
     }
     
     // 渦巻き歪みフィルタ
+    class func swirlFilter(baseImage: UIImage) -> UIImage
+    {
+        return GPUImageSwirlFilter().imageByFilteringImage(baseImage);
+    }
     class func swirlFilter(baseImage: UIImage
         , radius: CGFloat
         , center: CGPoint
@@ -1301,6 +1434,10 @@ class ImageProcessing
     }
 
     // 膨らみ歪みフィルタ
+    class func bulgeDistortionFilter(baseImage: UIImage) -> UIImage
+    {
+        return GPUImageBulgeDistortionFilter().imageByFilteringImage(baseImage);
+    }
     class func bulgeDistortionFilter(baseImage: UIImage
         , radius: CGFloat
         , center: CGPoint
@@ -1318,6 +1455,10 @@ class ImageProcessing
     }
 
     // 挟み込み歪みフィルタ
+    class func pinchDistortionFilter(baseImage: UIImage) -> UIImage
+    {
+        return GPUImagePinchDistortionFilter().imageByFilteringImage(baseImage);
+    }
     class func pinchDistortionFilter(baseImage: UIImage
         , radius: CGFloat
         , center: CGPoint
@@ -1335,6 +1476,10 @@ class ImageProcessing
     }
 
     // 伸縮歪みフィルタ
+    class func stretchDistortionFilter(baseImage: UIImage) -> UIImage
+    {
+        return GPUImageStretchDistortionFilter().imageByFilteringImage(baseImage);
+    }
     class func stretchDistortionFilter(baseImage: UIImage
         , center: CGPoint
         ) -> UIImage
@@ -1346,6 +1491,10 @@ class ImageProcessing
     }
     
     // 指定した色で外側から侵食するふんわりフレーム的なフィルタ
+    class func vignetteFilter(baseImage: UIImage) -> UIImage
+    {
+        return GPUImageVignetteFilter().imageByFilteringImage(baseImage);
+    }
     class func vignetteFilter(baseImage: UIImage
         , vignetteCenter: CGPoint
         , vignetteColor: GPUVector3
@@ -1366,6 +1515,10 @@ class ImageProcessing
     }
 
     // 質のいいポスタライズみたいな
+    class func kuwaharaFilter(baseImage: UIImage) -> UIImage
+    {
+        return GPUImageKuwaharaFilter().imageByFilteringImage(baseImage);
+    }
     class func kuwaharaFilter(baseImage: UIImage
         , radius: UInt
         ) -> UIImage
@@ -1374,6 +1527,204 @@ class ImageProcessing
         var filter = GPUImageKuwaharaFilter();
         filter.radius = radius;
         return filter.imageByFilteringImage(baseImage);
+    }
+    
+    class func filter_exec(image: UIImage, section: Int, row: Int, overlay: UIImage? = nil) -> UIImage
+    {
+        switch (section) {
+        case 0: // color
+            return ImageProcessing.filter_exec_colorfilter(image, row: row);
+        case 1: // processiong
+            return ImageProcessing.filter_exec_proccessfilter(image, row: row);
+        case 2: // blend
+            if(overlay != nil)
+            {
+                return ImageProcessing.filter_exec_blendfilter(image, row: row, overlay: overlay!);
+            }
+        case 3: // visual effect
+            return ImageProcessing.filter_exec_visualeffectfilter(image, row: row);
+        default:
+            break;
+        }
+        return image;
+    }
+    class func filter_exec_colorfilter(image: UIImage, row: Int) -> UIImage
+    {
+        switch (row) {
+        case 0:
+            return brightnessFilter(image);
+        case 1:
+            return exposureFilter(image);
+        case 2:
+            return contrastFilter(image);
+        case 3:
+            return gammaFilter(image);
+        case 4:
+            return colorMatrixFilter(image);
+        case 5:
+            return rgbFilter(image);
+        case 6:
+            return hueFilter(image);
+        case 7:
+            return toneCurveFilter(image);
+        case 8:
+            return highlightShadowFilter(image);
+        case 9:
+            return colorInvertFilter(image);
+        case 10:
+            return grayscaleFilter(image);
+        case 11:
+            return falseColorFilter(image);
+        case 12:
+            return sepiaFilter(image);
+        case 13:
+            return opacityFilter(image);
+        case 14:
+            return luminanceThresholdFilter(image);
+        case 15:
+            return averageLuminanceThresholdFilter(image);
+        default:
+            break;
+        }
+        return image;
+    }
+    class func filter_exec_proccessfilter(image: UIImage, row: Int) -> UIImage
+    {
+        switch (row) {
+        case 0:
+            return transform2DFilter(image);
+        case 1:
+            return transform3DFilter(image);
+        case 2:
+            return cropFilter(image);
+        case 3:
+            return lanczosResamplingFilter(image);
+        case 4:
+            return sharpenFilter(image);
+        case 5:
+            return unsharpMaskFilter(image);
+        case 6:
+            return gaussianBlurFilter(image);
+        case 7:
+            return gaussianSelectiveBlurFilter(image);
+        case 8:
+            return tiltShiftFilter(image);
+        case 9:
+            return boxBlurFilter(image);
+        case 10:
+            return convolution3x3Filter(image);
+        case 11:
+            return sobelEdgeDetectionFilter(image);
+        case 12:
+            return cannyEdgeDetectionFilter(image);
+        case 13:
+            return dilationFilter(image);
+        case 14:
+            return rgbDilationFilter(image);
+        case 15:
+            return erosionFilter(image);
+        case 16:
+            return rgbErosionFilter(image);
+        case 17:
+            return openingFilter(image);
+        case 18:
+            return rgbOpeningFilter(image);
+        case 19:
+            return closingFilter(image);
+        case 20:
+            return rgbClosingFilter(image);
+        case 21:
+            return lowPassFilter(image);
+        case 22:
+            return highPassFilter(image);
+        case 23:
+            return motionDetector(image);
+        default:
+            break;
+        }
+        return image;
+    }
+    class func filter_exec_blendfilter(image: UIImage, row: Int, overlay: UIImage) -> UIImage
+    {
+        switch (row) {
+        case 0:
+            return chromaKeyFilter(image, overlayImage: overlay);
+        case 1:
+            return chromaKeyBlendFilter(image, overlayImage: overlay);
+        case 2:
+            return dissolveBlendFilter(image, overlayImage: overlay);
+        case 3:
+            return multiplyBlendFilter(image, overlayImage: overlay);
+        case 4:
+            return addBlendFilter(image, overlayImage: overlay);
+        case 5:
+            return divideBlendFilter(image, overlayImage: overlay);
+        case 6:
+            return overlayBlendFilter(image, overlayImage: overlay);
+        case 7:
+            return darkenBlendFilter(image, overlayImage: overlay);
+        case 8:
+            return lightenBlendFilter(image, overlayImage: overlay);
+        case 9:
+            return colorBurnBlendFilter(image, overlayImage: overlay);
+        case 10:
+            return colorDodgeBlendFilter(image, overlayImage: overlay);
+        case 11:
+            return screenBlendFilter(image, overlayImage: overlay);
+        case 12:
+            return exclusionBlendFilter(image, overlayImage: overlay);
+        case 13:
+            return differenceBlendFilter(image, overlayImage: overlay);
+        case 14:
+            return hardLightBlendFilter(image, overlayImage: overlay);
+        case 15:
+            return softLightBlendFilter(image, overlayImage: overlay);
+        case 16:
+            return alphaBlendFilter(image, overlayImage: overlay);
+        default:
+            break;
+        }
+        return image;
+    }
+    class func filter_exec_visualeffectfilter(image: UIImage, row: Int) -> UIImage
+    {
+        switch (row) {
+        case 0:
+            return pixellateFilter(image);
+        case 1:
+            return polarPixellateFilter(image);
+        case 2:
+            return polkaDotFilter(image);
+        case 3:
+            return halftoneFilter(image);
+        case 4:
+            return crosshatchFilter(image);
+        case 5:
+            return sketchFilter(image);
+        case 6:
+            return toonFilter(image);
+        case 7:
+            return smoothToonFilter(image);
+        case 8:
+            return embossFilter(image);
+        case 9:
+            return posterizeFilter(image);
+        case 10:
+            return swirlFilter(image);
+        case 11:
+            return bulgeDistortionFilter(image);
+        case 12:
+            return pinchDistortionFilter(image);
+        case 13:
+            return stretchDistortionFilter(image);
+        case 14:
+            return vignetteFilter(image);
+        case 15:
+            return kuwaharaFilter(image);
+        default:
+            break;
+        }
+        return image;
     }
 }
 

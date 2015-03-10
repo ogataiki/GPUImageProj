@@ -2,16 +2,34 @@ import UIKit
 import GPUImage
 
 class ViewController: UIViewController
-    ,UIImagePickerControllerDelegate
-    ,UINavigationControllerDelegate
+    , UIImagePickerControllerDelegate
+    , UINavigationControllerDelegate
+    , SelectFilterDelegate
 {
 
     @IBOutlet weak var showImageView: UIImageView!
+    @IBOutlet weak var beforAfterControl: UISegmentedControl!
     var imageSource: UIImage!;
+    var imageNow: UIImage!;
     var focusCenter: CIVector!;
     var focusRadius0: Float!;
     var focusRadius1: Float!;
     
+    var selectedFilterSection: Int = (-1);
+    var selectedFilterRow: Int = (-1);
+    
+    enum pickerModeType : Int
+    {
+        case sourceSelect = 0, overlaySelect
+    }
+    var pickerMode: pickerModeType = pickerModeType.sourceSelect;
+
+    enum selectImage : Int
+    {
+        case befor = 0, after
+    }
+    var beforAfter: selectImage = selectImage.befor;
+
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
@@ -23,6 +41,7 @@ class ViewController: UIViewController
         super.viewDidLayoutSubviews();
         
         // AutoLayoutを使用するとframeが確定するのはここ
+        beforAfterControl.addTarget(self, action: "beforAfterChange:", forControlEvents: UIControlEvents.ValueChanged);
     }
     
     override func didReceiveMemoryWarning() {
@@ -31,6 +50,8 @@ class ViewController: UIViewController
     }
     
     @IBAction func pickImageAction(sender: UIBarButtonItem) {
+        
+        pickerMode = pickerModeType.sourceSelect;
         
         let sourceType: UIImagePickerControllerSourceType = UIImagePickerControllerSourceType.PhotoLibrary;
         
@@ -47,29 +68,117 @@ class ViewController: UIViewController
     @IBAction func filtersSelectAction(sender: UIBarButtonItem) {
         
         // フィルタ選択
-        var selectView = self.storyboard?.instantiateViewControllerWithIdentifier("SelectFilterVC") as UIViewController;
-        self.presentViewController(selectView, animated: true, completion: { () -> Void in
+        if let image = imageSource
+        {
+            var selectView = self.storyboard?.instantiateViewControllerWithIdentifier("SelectFilterVC") as UIViewController;
+            self.presentViewController(selectView, animated: true, completion: { () -> Void in
+                
+            })
+        }
+    }
+    
+    @IBAction func imageSave(sender: UIBarButtonItem) {
+        if let image = imageNow
+        {
+            UIImageWriteToSavedPhotosAlbum(image, self, "image:didFinishSavingWithError:contextInfo:", nil);
+        }
+    }
+    func image(image: UIImage, didFinishSavingWithError error: NSError!, contextInfo: UnsafeMutablePointer<Void>)
+    {
+        if error != nil
+        {
+            let alert:UIAlertController = UIAlertController(title:"保存失敗",
+                message:NSString(format:"errorcode : %d", error.code) as String,
+                preferredStyle: UIAlertControllerStyle.Alert);
             
-        })
+            //Cancel 一つだけしか指定できない
+            let cancelAction:UIAlertAction = UIAlertAction(title: "OK",
+                style: UIAlertActionStyle.Cancel,
+                handler:{(action:UIAlertAction!) -> Void in
+            })
+            alert.addAction(cancelAction)
+            self.presentViewController(alert, animated: true, completion: nil);
+        }
+    }
+    
+    func filterSelectFinish(section: Int, row: Int)
+    {
+        selectedFilterSection = section;
+        selectedFilterRow = row;
+        if(section >= 0 && section != 2)
+        {
+            imageNow = ImageProcessing.filter_exec((beforAfter == selectImage.befor) ? imageSource : imageNow,
+                section: section,
+                row: row);
+            self.showImageView.image = imageNow;
+
+            beforAfter = selectImage.after;
+            beforAfterControl.selectedSegmentIndex = beforAfter.rawValue;
+        }
+        self.dismissViewControllerAnimated(true, completion: { () -> Void in
+            
+            if(self.selectedFilterSection == 2)
+            {
+                // オーバレイ画像を選択する
+
+                let alert:UIAlertController = UIAlertController(title:"ブレンド画像選択",
+                    message: nil,
+                    preferredStyle: UIAlertControllerStyle.Alert);
+                
+                //Cancel 一つだけしか指定できない
+                let cancelAction:UIAlertAction = UIAlertAction(title: "やめる",
+                    style: UIAlertActionStyle.Cancel,
+                    handler:{(action:UIAlertAction!) -> Void in
+                        
+                        self.selectedFilterSection = (-1);
+                        self.selectedFilterRow = (-1);
+                })
+                
+                //Default 複数指定可
+                let defaultAction:UIAlertAction = UIAlertAction(title: "選択する",
+                    style: UIAlertActionStyle.Default,
+                    handler:{(action:UIAlertAction!) -> Void in
+                        
+                        self.pickerMode = pickerModeType.overlaySelect;
+                        let picker: UIImagePickerController = UIImagePickerController();
+                        picker.sourceType = UIImagePickerControllerSourceType.PhotoLibrary;
+                        picker.delegate = self;
+                        self.presentViewController(picker, animated: true, completion: nil);
+                })
+                alert.addAction(cancelAction)
+                alert.addAction(defaultAction)
+                self.presentViewController(alert, animated: true, completion: nil)
+            }
+        });
     }
     
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [NSObject : AnyObject]) {
         
         let dic: NSDictionary = info;
-        imageSource = dic.objectForKey(UIImagePickerControllerOriginalImage) as UIImage;
         
-        self.dismissViewControllerAnimated(true, completion: { () -> Void in
+        if(pickerMode == pickerModeType.overlaySelect && self.selectedFilterSection == 2)
+        {
+            
+            imageNow = ImageProcessing.filter_exec((beforAfter == selectImage.befor) ? imageSource : imageNow,
+                section: selectedFilterSection,
+                row: selectedFilterRow,
+                overlay: dic.objectForKey(UIImagePickerControllerOriginalImage) as? UIImage);
+            self.showImageView.image = imageNow;
+            
+            beforAfter = selectImage.after;
+            beforAfterControl.selectedSegmentIndex = beforAfter.rawValue;
+        }
+        else
+        {
+            imageSource = dic.objectForKey(UIImagePickerControllerOriginalImage) as UIImage;
+            imageNow = dic.objectForKey(UIImagePickerControllerOriginalImage) as UIImage;
             
             // そのまま表示
             self.showImageView.image = self.imageSource;
-            
-            // フィルタ選択
-            var selectView = self.storyboard?.instantiateViewControllerWithIdentifier("SelectFilterVC") as UIViewController;
-            self.presentViewController(selectView, animated: true, completion: { () -> Void in
-                
-            })
 
-            
+            beforAfter = selectImage.befor;
+            beforAfterControl.selectedSegmentIndex = beforAfter.rawValue;
+
             // フィルタリングして表示
 //            self.showImageView.image = ImageProcessing.gaussianSelectiveBlurFilter(self.imageSource
 //                , blurSize: 5.0
@@ -78,17 +187,35 @@ class ViewController: UIViewController
 //                , exBlurSize: 0.5
 //                , aspectRatio: 1.0
 //            );
-
-//            self.showImageView.image = ImageProcessing.darkenBlendFilter(self.imageSource
+//            
+//            self.showImageView.image = ImageProcessing.chromaKeyBlendFilter(self.imageSource
 //                , overlayImage: ImageProcessing.sobelEdgeDetectionFilter(self.imageSource)
+//                , thresholdSensitivity: 0.4
+//                , smoothing: 0.1
 //            );
-
+//            
 //            self.showImageView.image = ImageProcessing.animeStyleFilter(self.imageSource
 //            );
-            
+        }
+
+        // 閉じる
+        self.dismissViewControllerAnimated(true, completion: { () -> Void in
         });
     }
     
+    func beforAfterChange(seg: UISegmentedControl)
+    {
+        if(seg.selectedSegmentIndex == selectImage.after.rawValue)
+        {
+            beforAfter = selectImage.after;
+            self.showImageView.image = imageNow;
+        }
+        else
+        {
+            beforAfter = selectImage.befor;
+            self.showImageView.image = imageSource;
+        }
+    }
     
 }
 

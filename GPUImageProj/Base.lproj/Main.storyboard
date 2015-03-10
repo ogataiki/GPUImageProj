@@ -30,7 +30,22 @@
                                             <action selector="filtersSelectAction:" destination="BYZ-38-t0r" id="VAR-Np-Qv0"/>
                                         </connections>
                                     </barButtonItem>
+                                    <barButtonItem style="plain" id="rh1-Nt-uGf">
+                                        <segmentedControl key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" id="daF-yL-3g5">
+                                            <rect key="frame" x="267" y="8" width="123" height="30"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <segments>
+                                                <segment title="befor"/>
+                                                <segment title="after"/>
+                                            </segments>
+                                        </segmentedControl>
+                                    </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="yyE-6s-3IY"/>
+                                    <barButtonItem systemItem="save" id="LFF-y5-qye">
+                                        <connections>
+                                            <action selector="imageSave:" destination="BYZ-38-t0r" id="a4D-j3-MF9"/>
+                                        </connections>
+                                    </barButtonItem>
                                 </items>
                             </toolbar>
                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="zA4-kz-tal">
@@ -50,6 +65,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="beforAfterControl" destination="daF-yL-3g5" id="8qF-kx-O9z"/>
                         <outlet property="showImageView" destination="zA4-kz-tal" id="12q-2C-ugP"/>
                     </connections>
                 </viewController>
@@ -117,7 +133,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="3W9-xR-fzp" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="995" y="349"/>
+            <point key="canvasLocation" x="966" y="349"/>
         </scene>
     </scenes>
 </document>

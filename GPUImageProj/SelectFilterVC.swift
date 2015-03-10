@@ -1,11 +1,21 @@
 import UIKit
 
+protocol SelectFilterDelegate
+{
+    func filterSelectFinish(section: Int, row: Int);
+}
+
 class SelectFilterVC: UIViewController
     , UINavigationControllerDelegate
     , UITableViewDelegate
     , UITableViewDataSource
 {
     @IBOutlet weak var filtersTableView: UITableView!
+    
+    var selectedSection: Int = (-1);
+    var selectedRow: Int = (-1);
+    
+    var selectFilterDelegate: SelectFilterDelegate!;
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,18 +38,30 @@ class SelectFilterVC: UIViewController
         // Dispose of any resources that can be recreated.
     }
 
+    func selectFinish()
+    {
+        selectFilterDelegate = self.presentingViewController as ViewController;
+        return selectFilterDelegate.filterSelectFinish(selectedSection, row: selectedRow);
+    }
+    
     @IBAction func SelectedFilter(sender: AnyObject) {
         
+        selectFinish();
         
-        self.dismissViewControllerAnimated(true, completion: { () -> Void in
-        });
+//        self.presentingViewController?.dismissViewControllerAnimated(true, completion: { () -> Void in
+//        });
     }
     
     @IBAction func SelectedCancel(sender: AnyObject) {
         
-        self.dismissViewControllerAnimated(true, completion: { () -> Void in
-        });
+        selectedSection = (-1);
+        selectedRow = (-1);
+        selectFinish();
+
+//        self.presentingViewController?.dismissViewControllerAnimated(true, completion: { () -> Void in
+//        });
     }
+    
     
     //
     // tableview delegate
@@ -113,22 +135,8 @@ class SelectFilterVC: UIViewController
     // 選択された
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
     {
-        switch (indexPath.section) {
-        case 0: // color
-            ImageProcessing.COLORFILTERS[indexPath.row];
-            break;
-        case 1: // processiong
-            ImageProcessing.PROCESSFILTERS[indexPath.row];
-            break;
-        case 2: // blend
-            ImageProcessing.BLENDFILTERS[indexPath.row];
-            break;
-        case 3: // visual effect
-            ImageProcessing.VISUALEFFECTFILTERS[indexPath.row];
-            break;
-        default:
-            break;
-        }
+        selectedSection = indexPath.section;
+        selectedRow = indexPath.row;
     }
 }
 
