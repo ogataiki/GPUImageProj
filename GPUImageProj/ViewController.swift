@@ -178,24 +178,6 @@ class ViewController: UIViewController
 
             beforAfter = selectImage.befor;
             beforAfterControl.selectedSegmentIndex = beforAfter.rawValue;
-
-            // フィルタリングして表示
-//            self.showImageView.image = ImageProcessing.gaussianSelectiveBlurFilter(self.imageSource
-//                , blurSize: 5.0
-//                , radius: 0.4
-//                , point: CGPointMake(0.5, 0.5)
-//                , exBlurSize: 0.5
-//                , aspectRatio: 1.0
-//            );
-//            
-//            self.showImageView.image = ImageProcessing.chromaKeyBlendFilter(self.imageSource
-//                , overlayImage: ImageProcessing.sobelEdgeDetectionFilter(self.imageSource)
-//                , thresholdSensitivity: 0.4
-//                , smoothing: 0.1
-//            );
-//            
-//            self.showImageView.image = ImageProcessing.animeStyleFilter(self.imageSource
-//            );
         }
 
         // 閉じる

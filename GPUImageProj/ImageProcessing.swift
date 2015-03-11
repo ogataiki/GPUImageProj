@@ -151,7 +151,9 @@ class ImageProcessing
     // 輝度
     class func brightnessFilter(baseImage: UIImage) -> UIImage
     {
-        return GPUImageBrightnessFilter().imageByFilteringImage(baseImage);
+        var filter = GPUImageBrightnessFilter();
+        filter.brightness = 0.1;
+        return filter.imageByFilteringImage(baseImage);
     }
     class func brightnessFilter(baseImage: UIImage
         , brightness: CGFloat
@@ -166,7 +168,9 @@ class ImageProcessing
     // 露出(ISO)
     class func exposureFilter(baseImage: UIImage) -> UIImage
     {
-        return GPUImageExposureFilter().imageByFilteringImage(baseImage);
+        var filter = GPUImageExposureFilter();
+        filter.exposure = 0.5;
+        return filter.imageByFilteringImage(baseImage);
     }
     class func exposureFilter(baseImage: UIImage
         , exposure: CGFloat
@@ -181,7 +185,9 @@ class ImageProcessing
     // コントラスト
     class func contrastFilter(baseImage: UIImage) -> UIImage
     {
-        return GPUImageContrastFilter().imageByFilteringImage(baseImage);
+        var filter = GPUImageContrastFilter();
+        filter.contrast = 1.5;
+        return filter.imageByFilteringImage(baseImage);
     }
     class func contrastFilter(baseImage: UIImage
         , contrast: CGFloat
@@ -196,7 +202,9 @@ class ImageProcessing
     // ガンマ値
     class func gammaFilter(baseImage: UIImage) -> UIImage
     {
-        return GPUImageGammaFilter().imageByFilteringImage(baseImage);
+        var filter = GPUImageGammaFilter();
+        filter.gamma = 1.1;
+        return filter.imageByFilteringImage(baseImage);
     }
     class func gammaFilter(baseImage: UIImage
         , gamma: CGFloat
@@ -211,7 +219,18 @@ class ImageProcessing
     // カラーマトリクス変換
     class func colorMatrixFilter(baseImage: UIImage) -> UIImage
     {
-        return GPUImageColorMatrixFilter().imageByFilteringImage(baseImage);
+        var filter = GPUImageColorMatrixFilter();
+        var r : GLfloat = 0.0;
+        var g : GLfloat = 1.0;
+        var b : GLfloat = 0.0;
+        var a : GLfloat = 0.0;
+        filter.colorMatrix = GPUMatrix4x4(
+            one:    GPUVector4(one: r, two: r, three: r, four: r),
+            two:    GPUVector4(one: g, two: g, three: g, four: g),
+            three:  GPUVector4(one: b, two: b, three: b, four: b),
+            four:   GPUVector4(one: a, two: a, three: a, four: a));
+        filter.intensity = 0.1;
+        return filter.imageByFilteringImage(baseImage);
     }
     class func colorMatrixFilter(baseImage: UIImage
         , matrix: GPUMatrix4x4
@@ -231,7 +250,11 @@ class ImageProcessing
     // RGB調整
     class func rgbFilter(baseImage: UIImage) -> UIImage
     {
-        return GPUImageRGBFilter().imageByFilteringImage(baseImage);
+        var filter = GPUImageRGBFilter();
+        filter.red = 0.5;
+        filter.green = 1.0;
+        filter.blue = 0.0;
+        return filter.imageByFilteringImage(baseImage);
     }
     class func rgbFilter(baseImage: UIImage
         , red: CGFloat
@@ -250,7 +273,9 @@ class ImageProcessing
     // 色相変換 角度で指定(180.0で逆になる？)
     class func hueFilter(baseImage: UIImage) -> UIImage
     {
-        return GPUImageHueFilter().imageByFilteringImage(baseImage);
+        var filter = GPUImageHueFilter();
+        filter.hue = 90;
+        return filter.imageByFilteringImage(baseImage);
     }
     class func hueFilter(baseImage: UIImage
         , hue: CGFloat
@@ -265,7 +290,29 @@ class ImageProcessing
     // トーンカーブ
     class func toneCurveFilter(baseImage: UIImage) -> UIImage
     {
-        return GPUImageToneCurveFilter().imageByFilteringImage(baseImage);
+        var filter = GPUImageToneCurveFilter();
+        var rArray = NSArray(arrayLiteral:
+            NSValue(CGPoint: CGPointMake(0.0, 0.0)),
+            NSValue(CGPoint: CGPointMake(0.25, 0.75)),
+            NSValue(CGPoint: CGPointMake(0.5, 0.5)),
+            NSValue(CGPoint: CGPointMake(0.75, 0.25)),
+            NSValue(CGPoint: CGPointMake(1.0, 1.0)));
+        var gArray = NSArray(arrayLiteral:
+            NSValue(CGPoint: CGPointMake(1.0, 1.0)),
+            NSValue(CGPoint: CGPointMake(0.25, 0.75)),
+            NSValue(CGPoint: CGPointMake(0.5, 0.5)),
+            NSValue(CGPoint: CGPointMake(0.75, 0.25)),
+            NSValue(CGPoint: CGPointMake(0.0, 0.0)));
+        var bArray = NSArray(arrayLiteral:
+            NSValue(CGPoint: CGPointMake(1.0, 1.0)),
+            NSValue(CGPoint: CGPointMake(0.25, 0.75)),
+            NSValue(CGPoint: CGPointMake(0.5, 0.5)),
+            NSValue(CGPoint: CGPointMake(0.75, 0.25)),
+            NSValue(CGPoint: CGPointMake(0.0, 0.0)));
+        filter.redControlPoints = rArray;
+        filter.greenControlPoints = gArray;
+        filter.blueControlPoints = bArray;
+        return filter.imageByFilteringImage(baseImage);
     }
     class func toneCurveFilter(baseImage: UIImage
         , redPoints: NSArray
@@ -286,7 +333,10 @@ class ImageProcessing
     // ハイライト調整
     class func highlightShadowFilter(baseImage: UIImage) -> UIImage
     {
-        return GPUImageHighlightShadowFilter().imageByFilteringImage(baseImage);
+        var filter = GPUImageHighlightShadowFilter();
+        filter.shadows = 0.2;
+        filter.highlights = 0.8;
+        return filter.imageByFilteringImage(baseImage);
     }
     class func highlightShadowFilter(baseImage: UIImage
         , shadows: CGFloat
@@ -349,7 +399,9 @@ class ImageProcessing
     // アルファチャンネル調整
     class func opacityFilter(baseImage: UIImage) -> UIImage
     {
-        return GPUImageOpacityFilter().imageByFilteringImage(baseImage);
+        var filter = GPUImageOpacityFilter();
+        filter.opacity = 0.5;
+        return filter.imageByFilteringImage(baseImage);
     }
     class func opacityFilter(baseImage: UIImage
         , opacity: CGFloat
