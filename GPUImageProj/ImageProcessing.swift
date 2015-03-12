@@ -287,7 +287,7 @@ class ImageProcessing
         return filter.imageByFilteringImage(baseImage);
     }
     
-    // トーンカーブ
+    // トーンカーブ##
     class func toneCurveFilter(baseImage: UIImage) -> UIImage
     {
         var filter = GPUImageToneCurveFilter();
@@ -456,6 +456,7 @@ class ImageProcessing
         var transform: CGAffineTransform;
         transform = CGAffineTransformMakeScale(0.75, 0.75);
         transform = CGAffineTransformTranslate(transform, 0, 0.5);
+        filter.affineTransform = transform;
         filter.ignoreAspectRatio = true;
         return filter.imageByFilteringImage(baseImage);
     }
@@ -509,7 +510,11 @@ class ImageProcessing
     {
         var filter = GPUImageCropFilter();
         filter.cropRegion = CGRectMake(0.25, 0.25, 0.5, 0.5);
-        return filter.imageByFilteringImage(baseImage);
+
+        // GPUImageCropFilterのforceProcessingAtSizeが動かないので
+        var tmp = GPUImageTransformFilter();
+        tmp.forceProcessingAtSize(baseImage.size);
+        return tmp.imageByFilteringImage(filter.imageByFilteringImage(baseImage));
     }
     class func cropFilter(baseImage: UIImage
         , cropRegion: CGRect
@@ -529,12 +534,15 @@ class ImageProcessing
     // シャープネス
     class func sharpenFilter(baseImage: UIImage) -> UIImage
     {
-        return GPUImageSharpenFilter().imageByFilteringImage(baseImage);
+        var filter = GPUImageSharpenFilter();
+        filter.sharpness = 0.5;
+        return filter.imageByFilteringImage(baseImage);
     }
     class func sharpenFilter(baseImage: UIImage
         , sharpness: CGFloat
         ) -> UIImage
     {
+        // sharpness : -4.0 ~ 4.0 Default 0.0
         var filter = GPUImageSharpenFilter();
         filter.sharpness = sharpness;
         return filter.imageByFilteringImage(baseImage);
@@ -543,7 +551,10 @@ class ImageProcessing
     // アンシャープマスク
     class func unsharpMaskFilter(baseImage: UIImage) -> UIImage
     {
-        return GPUImageUnsharpMaskFilter().imageByFilteringImage(baseImage);
+        var filter = GPUImageUnsharpMaskFilter();
+        filter.blurRadiusInPixels = 2.0;
+        filter.intensity = 2.0;
+        return filter.imageByFilteringImage(baseImage);
     }
     class func unsharpMaskFilter(baseImage: UIImage
         , blurSize: CGFloat
@@ -561,7 +572,9 @@ class ImageProcessing
     // ガウスぼかし
     class func gaussianBlurFilter(baseImage: UIImage) -> UIImage
     {
-        return GPUImageGaussianBlurFilter().imageByFilteringImage(baseImage);
+        var filter = GPUImageGaussianBlurFilter();
+        filter.blurRadiusInPixels = 2.0;
+        return filter.imageByFilteringImage(baseImage);
     }
     class func gaussianBlurFilter(baseImage: UIImage
         , blurSize: CGFloat
@@ -576,7 +589,13 @@ class ImageProcessing
     // 円形フォーカス的ぼかし
     class func gaussianSelectiveBlurFilter(baseImage: UIImage) -> UIImage
     {
-        return GPUImageGaussianSelectiveBlurFilter().imageByFilteringImage(baseImage);
+        var filter = GPUImageGaussianSelectiveBlurFilter();
+        filter.blurRadiusInPixels = 5.0;
+        filter.excludeCircleRadius = 0.4;
+        filter.excludeCirclePoint = CGPointMake(0.5, 0.5);
+        filter.excludeBlurSize = 0.2;
+        filter.aspectRatio = 1.0;
+        return filter.imageByFilteringImage(baseImage);
     }
     class func gaussianSelectiveBlurFilter(baseImage: UIImage
         , blurSize: CGFloat
@@ -603,7 +622,12 @@ class ImageProcessing
     // チルトシフト(上下ぼかし)
     class func tiltShiftFilter(baseImage: UIImage) -> UIImage
     {
-        return GPUImageTiltShiftFilter().imageByFilteringImage(baseImage);
+        var filter = GPUImageTiltShiftFilter();
+        filter.blurRadiusInPixels = 3.0;
+        filter.topFocusLevel = 0.4;
+        filter.bottomFocusLevel = 0.6;
+        filter.focusFallOffRate = 0.2;
+        return filter.imageByFilteringImage(baseImage);
     }
     class func tiltShiftFilter(baseImage: UIImage
         , blurSize: CGFloat
@@ -627,7 +651,9 @@ class ImageProcessing
     // 平滑化ぼかし?
     class func boxBlurFilter(baseImage :UIImage) -> UIImage
     {
-        return GPUImageBoxBlurFilter().imageByFilteringImage(baseImage);
+        var filter = GPUImageBoxBlurFilter();
+        filter.blurRadiusInPixels = 2.0;
+        return filter.imageByFilteringImage(baseImage);
     }
     class func boxBlurFilter(baseImage :UIImage
         , blurSize: CGFloat
@@ -638,10 +664,17 @@ class ImageProcessing
         return filter.imageByFilteringImage(baseImage);
     }
     
-    // 画像に対して3x3の畳み込みカーネルを実行します(?)
+    // 3x3の畳み込みカーネル##
     class func convolution3x3Filter(baseImage: UIImage) -> UIImage
     {
-        return GPUImage3x3ConvolutionFilter().imageByFilteringImage(baseImage);
+        var filter = GPUImage3x3ConvolutionFilter();
+        var kernel = GPUMatrix3x3(
+            // 輪郭強調のサンプル
+            one:    GPUVector3(one: 0, two: 1, three: 0),
+            two:    GPUVector3(one: 1, two: -4, three: 1),
+            three:  GPUVector3(one: 0, two: 1, three: 0));
+        filter.convolutionKernel = kernel;
+        return filter.imageByFilteringImage(baseImage);
     }
     class func convolution3x3Filter(baseImage: UIImage
         , kernel: GPUMatrix3x3
@@ -859,7 +892,9 @@ class ImageProcessing
     // ローパスフィルタ
     class func lowPassFilter(baseImage: UIImage) -> UIImage
     {
-        return GPUImageLowPassFilter().imageByFilteringImage(baseImage);
+        var filter = GPUImageLowPassFilter();
+        filter.filterStrength = 0.2;
+        return filter.imageByFilteringImage(baseImage);
     }
     class func lowPassFilter(baseImage: UIImage
         , filterStrength: CGFloat
@@ -874,7 +909,9 @@ class ImageProcessing
     // ハイパスフィルタ
     class func highPassFilter(baseImage: UIImage) -> UIImage
     {
-        return GPUImageHighPassFilter().imageByFilteringImage(baseImage);
+        var filter = GPUImageHighPassFilter();
+        filter.filterStrength = 0.2;
+        return filter.imageByFilteringImage(baseImage);
     }
     class func highPassFilter(baseImage: UIImage
         , filterStrength: CGFloat
