@@ -133,8 +133,8 @@ class ViewController: UIViewController
                         self.selectedFilterSection = (-1);
                         self.selectedFilterRow = (-1);
                 })
-                
-                //Default 複数指定可
+                alert.addAction(cancelAction)
+
                 let defaultAction:UIAlertAction = UIAlertAction(title: "選択する",
                     style: UIAlertActionStyle.Default,
                     handler:{(action:UIAlertAction!) -> Void in
@@ -145,11 +145,50 @@ class ViewController: UIViewController
                         picker.delegate = self;
                         self.presentViewController(picker, animated: true, completion: nil);
                 })
-                alert.addAction(cancelAction)
                 alert.addAction(defaultAction)
+
+                let sameBaseAction:UIAlertAction = UIAlertAction(title: "同じ画像(ベース)",
+                    style: UIAlertActionStyle.Default,
+                    handler:{(action:UIAlertAction!) -> Void in
+                        
+                        self.imageNow = ImageProcessing.filter_exec(
+                            (self.beforAfter == selectImage.befor) ? self.imageSource : self.imageNow,
+                            section: self.selectedFilterSection,
+                            row: self.selectedFilterRow,
+                            overlay: self.imageSource);
+                        self.showImageView.image = self.imageNow;
+                        
+                        self.beforAfter = selectImage.after;
+                        self.beforAfterControl.selectedSegmentIndex = self.beforAfter.rawValue;
+                })
+                alert.addAction(sameBaseAction)
+                
+                if((self.beforAfter == selectImage.after))
+                {
+                    let sameAction:UIAlertAction = UIAlertAction(title: "表示中の画像",
+                        style: UIAlertActionStyle.Default,
+                        handler:{(action:UIAlertAction!) -> Void in
+                            
+                            self.imageNow = ImageProcessing.filter_exec(
+                                self.imageNow,
+                                section: self.selectedFilterSection,
+                                row: self.selectedFilterRow,
+                                overlay: self.imageNow);
+                            self.showImageView.image = self.imageNow;
+                            
+                            self.beforAfter = selectImage.after;
+                            self.beforAfterControl.selectedSegmentIndex = self.beforAfter.rawValue;
+                    })
+                    alert.addAction(sameAction)
+                }
+                
                 self.presentViewController(alert, animated: true, completion: nil)
             }
         });
+    }
+    
+    @IBAction func RepeatFilterAction(sender: UIBarButtonItem) {
+        self.filterSelectFinish(self.selectedFilterSection, row: self.selectedFilterRow);
     }
     
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [NSObject : AnyObject]) {

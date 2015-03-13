@@ -949,7 +949,9 @@ class ImageProcessing
         ) -> UIImage
     {
         var filter = GPUImageChromaKeyFilter();
-        
+        filter.thresholdSensitivity = 0.4;
+        filter.smoothing = 0.1;
+
         var inputPicture = GPUImagePicture(CGImage: baseImage.CGImage, smoothlyScaleOutput: true);
         var overlayPicture = GPUImagePicture(CGImage: overlayImage.CGImage, smoothlyScaleOutput: true);
         inputPicture.addTarget(filter);
@@ -990,7 +992,9 @@ class ImageProcessing
         ) -> UIImage
     {
         var filter = GPUImageChromaKeyBlendFilter();
-        
+        filter.thresholdSensitivity = 0.4;
+        filter.smoothing = 0.1;
+
         var inputPicture = GPUImagePicture(CGImage: baseImage.CGImage, smoothlyScaleOutput: true);
         var overlayPicture = GPUImagePicture(CGImage: overlayImage.CGImage, smoothlyScaleOutput: true);
         inputPicture.addTarget(filter);
@@ -1028,7 +1032,8 @@ class ImageProcessing
         ) -> UIImage
     {
         var filter = GPUImageDissolveBlendFilter();
-        
+        filter.mix = 0.5;
+
         var inputPicture = GPUImagePicture(CGImage: baseImage.CGImage, smoothlyScaleOutput: true);
         var overlayPicture = GPUImagePicture(CGImage: overlayImage.CGImage, smoothlyScaleOutput: true);
         inputPicture.addTarget(filter);
@@ -1284,7 +1289,8 @@ class ImageProcessing
         ) -> UIImage
     {
         var filter = GPUImageAlphaBlendFilter();
-        
+        filter.mix = 1.0;
+
         var inputPicture = GPUImagePicture(CGImage: baseImage.CGImage, smoothlyScaleOutput: true);
         var overlayPicture = GPUImagePicture(CGImage: overlayImage.CGImage, smoothlyScaleOutput: true);
         inputPicture.addTarget(filter);

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6254" systemVersion="14C109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6254" systemVersion="14C1510" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
     </dependencies>
@@ -28,6 +28,11 @@
                                     <barButtonItem title="Filters" id="ZUS-AA-Lmt">
                                         <connections>
                                             <action selector="filtersSelectAction:" destination="BYZ-38-t0r" id="VAR-Np-Qv0"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem title="Repeat" id="Bcy-8e-jIT">
+                                        <connections>
+                                            <action selector="RepeatFilterAction:" destination="BYZ-38-t0r" id="8Ol-Ph-OjE"/>
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem style="plain" id="rh1-Nt-uGf">
