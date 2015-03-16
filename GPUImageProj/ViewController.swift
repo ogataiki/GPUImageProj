@@ -116,7 +116,7 @@ class ViewController: UIViewController
             self.dismissViewControllerAnimated(true, completion: { () -> Void in
                 // 畳み込みカーネルの場合はビューを指定
                 let nextView = self.storyboard?.instantiateViewControllerWithIdentifier("Convolution3x3VC") as Convolution3x3VC;
-                nextView.passImageSource(self.imageSource);
+                nextView.passImageSource((self.beforAfter == selectImage.befor) ? self.imageSource : self.imageNow);
                 self.presentViewController(nextView, animated: true, completion: nil);
             });
             return;
