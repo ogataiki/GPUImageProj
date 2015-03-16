@@ -1,10 +1,16 @@
 import UIKit
 import GPUImage
 
+protocol MainVCDelegate
+{
+    func passImageSource(baseImage: UIImage);
+}
+
 class ViewController: UIViewController
     , UIImagePickerControllerDelegate
     , UINavigationControllerDelegate
     , SelectFilterDelegate
+    , Convolution3x3VCDelegate
 {
 
     @IBOutlet weak var showImageView: UIImageView!
@@ -105,6 +111,16 @@ class ViewController: UIViewController
     {
         selectedFilterSection = section;
         selectedFilterRow = row;
+        if(section == 1 && row == 10)
+        {
+            self.dismissViewControllerAnimated(true, completion: { () -> Void in
+                // 畳み込みカーネルの場合はビューを指定
+                let nextView = self.storyboard?.instantiateViewControllerWithIdentifier("Convolution3x3VC") as Convolution3x3VC;
+                nextView.passImageSource(self.imageSource);
+                self.presentViewController(nextView, animated: true, completion: nil);
+            });
+            return;
+        }
         if(section >= 0 && section != 2)
         {
             imageNow = ImageProcessing.filter_exec((beforAfter == selectImage.befor) ? imageSource : imageNow,
@@ -184,6 +200,21 @@ class ViewController: UIViewController
                 
                 self.presentViewController(alert, animated: true, completion: nil)
             }
+        });
+    }
+    
+    func Convolution3x3Finish(afterImage: UIImage, isDone: Bool) {
+        
+        if(isDone)
+        {
+            imageNow = afterImage;
+            self.showImageView.image = imageNow;
+            beforAfter = selectImage.after;
+            beforAfterControl.selectedSegmentIndex = beforAfter.rawValue;
+        }
+        
+        // 閉じる
+        self.dismissViewControllerAnimated(true, completion: { () -> Void in
         });
     }
     

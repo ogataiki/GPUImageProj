@@ -21,6 +21,7 @@
 		0B5B51D71AAAF1BE00646081 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B5B51D21AAAF1BE00646081 /* QuartzCore.framework */; };
 		0B5B51D91AAAF1CE00646081 /* GPUImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B5B51D81AAAF1CE00646081 /* GPUImage.framework */; };
 		500100901AAD16DF00C17ECC /* SelectFilterVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5001008F1AAD16DF00C17ECC /* SelectFilterVC.swift */; };
+		500975591AB659A2006BBCCE /* Convolution3x3VC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 500975581AB659A2006BBCCE /* Convolution3x3VC.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,6 +53,7 @@
 		0B5B51D21AAAF1BE00646081 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		0B5B51D81AAAF1CE00646081 /* GPUImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GPUImage.framework; path = Carthage/Build/iOS/GPUImage.framework; sourceTree = "<group>"; };
 		5001008F1AAD16DF00C17ECC /* SelectFilterVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectFilterVC.swift; sourceTree = "<group>"; };
+		500975581AB659A2006BBCCE /* Convolution3x3VC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Convolution3x3VC.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,6 +105,7 @@
 				0B5B51AA1AAAEFBE00646081 /* AppDelegate.swift */,
 				0B5B51AC1AAAEFBE00646081 /* ViewController.swift */,
 				5001008F1AAD16DF00C17ECC /* SelectFilterVC.swift */,
+				500975581AB659A2006BBCCE /* Convolution3x3VC.swift */,
 				0B5B51CA1AAAF08900646081 /* ImageProcessing.swift */,
 				0B5B51AE1AAAEFBE00646081 /* Main.storyboard */,
 				0B5B51B11AAAEFBE00646081 /* Images.xcassets */,
@@ -271,6 +274,7 @@
 			files = (
 				0B5B51AD1AAAEFBE00646081 /* ViewController.swift in Sources */,
 				0B5B51AB1AAAEFBE00646081 /* AppDelegate.swift in Sources */,
+				500975591AB659A2006BBCCE /* Convolution3x3VC.swift in Sources */,
 				500100901AAD16DF00C17ECC /* SelectFilterVC.swift in Sources */,
 				0B5B51CB1AAAF08900646081 /* ImageProcessing.swift in Sources */,
 			);
