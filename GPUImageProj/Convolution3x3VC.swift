@@ -144,7 +144,7 @@ class Convolution3x3VC: UIViewController
         textField.resignFirstResponder();
         
         // 入力を数値に丸める
-        textField.text = NSString(format: "%.1f", NSString(string: textField.text).floatValue);
+        textField.text = NSString(format: "%.2f", NSString(string: textField.text).floatValue);
         
         // イメージ更新
         kernelUpdate();
