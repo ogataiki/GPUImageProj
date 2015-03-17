@@ -68,6 +68,16 @@ class Convolution3x3VC: UIViewController
         value2x1.keyboardType = UIKeyboardType.NumbersAndPunctuation;
         value2x2.keyboardType = UIKeyboardType.NumbersAndPunctuation;
         
+        value0x0.returnKeyType = UIReturnKeyType.Done;
+        value0x1.returnKeyType = UIReturnKeyType.Done;
+        value0x2.returnKeyType = UIReturnKeyType.Done;
+        value1x0.returnKeyType = UIReturnKeyType.Done;
+        value1x1.returnKeyType = UIReturnKeyType.Done;
+        value1x2.returnKeyType = UIReturnKeyType.Done;
+        value2x0.returnKeyType = UIReturnKeyType.Done;
+        value2x1.returnKeyType = UIReturnKeyType.Done;
+        value2x2.returnKeyType = UIReturnKeyType.Done;
+        
         value0x0.text = "0";
         value0x1.text = "0";
         value0x2.text = "0";
@@ -124,6 +134,10 @@ class Convolution3x3VC: UIViewController
                 two:    NSString(string: value2x1.text).floatValue,
                 three:  NSString(string: value2x2.text).floatValue)
         );
+    }
+    
+    func textFieldDidBeginEditing(textField: UITextField) {
+        textField.text = "";
     }
     
     func textFieldShouldReturn(textField: UITextField) -> Bool {
