@@ -11,6 +11,7 @@ class ViewController: UIViewController
     , UINavigationControllerDelegate
     , SelectFilterDelegate
     , Convolution3x3VCDelegate
+    , ToneCurveVCDelegate
 {
 
     @IBOutlet weak var showImageView: UIImageView!
@@ -111,6 +112,16 @@ class ViewController: UIViewController
     {
         selectedFilterSection = section;
         selectedFilterRow = row;
+        if(section == 0 && row == 7)
+        {
+            self.dismissViewControllerAnimated(true, completion: { () -> Void in
+                // トーンカーブの場合はビューを指定
+                let nextView = self.storyboard?.instantiateViewControllerWithIdentifier("ToneCurveVC") as ToneCurveVC;
+                nextView.passImageSource((self.beforAfter == selectImage.befor) ? self.imageSource : self.imageNow);
+                self.presentViewController(nextView, animated: true, completion: nil);
+            });
+            return;
+        }
         if(section == 1 && row == 10)
         {
             self.dismissViewControllerAnimated(true, completion: { () -> Void in
@@ -204,6 +215,20 @@ class ViewController: UIViewController
     }
     
     func Convolution3x3Finish(afterImage: UIImage, isDone: Bool) {
+        
+        if(isDone)
+        {
+            imageNow = afterImage;
+            self.showImageView.image = imageNow;
+            beforAfter = selectImage.after;
+            beforAfterControl.selectedSegmentIndex = beforAfter.rawValue;
+        }
+        
+        // 閉じる
+        self.dismissViewControllerAnimated(true, completion: { () -> Void in
+        });
+    }
+    func ToneCurveFinish(afterImage: UIImage, isDone: Bool) {
         
         if(isDone)
         {
