@@ -179,7 +179,7 @@ class ToneCurveVC: UIViewController
     func passImageSource(baseImage: UIImage)
     {
         imageSource = baseImage;
-        imageNow = ImageProcessing.toneCurveFilter(imageSource);
+        imageNow = ImageProcessing.toneCurveFilter(imageSource, points:points);
     }
     
     override func viewDidLoad() {
