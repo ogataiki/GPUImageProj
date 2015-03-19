@@ -11,6 +11,8 @@ class ToneCurveLeftView: UIView
     override func drawRect(rect: CGRect) {
         
         var context = UIGraphicsGetCurrentContext();
+        
+        CGContextClearRect(context, rect);
         CGContextSaveGState(context);
         
         CGContextAddRect(context, self.frame);
@@ -44,6 +46,7 @@ class ToneCurveRightView: UIView
     override func drawRect(rect: CGRect) {
         
         var context = UIGraphicsGetCurrentContext();
+        CGContextClearRect(context, rect);
         CGContextSaveGState(context);
         
         CGContextAddRect(context, self.frame);
@@ -75,25 +78,83 @@ class ToneCurveRightView: UIView
 
 class ToneCurveView: UIView
 {
+    class TouchPoint: UIView
+    {
+        override init(frame: CGRect) {
+            super.init(frame: frame);
+            backgroundColor = UIColor.clearColor();
+        }
+
+        required init(coder aDecoder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+        
+        override func drawRect(rect: CGRect) {
+            
+            var context = UIGraphicsGetCurrentContext();
+            CGContextSaveGState(context);
+            CGContextClearRect(context, rect);
+        
+            let w = self.frame.size.width;
+            let h = self.frame.size.height;
+            CGContextSetFillColorWithColor(context, UIColor.orangeColor().CGColor);
+            CGContextFillEllipseInRect(context, CGRectMake(0, 0, w, h));
+            
+            CGContextRestoreGState(context);
+        }
+    }
+    
+    var points: NSArray!;
+    
+    func setPoints(arr: NSArray) {
+        points = arr;
+    }
+    func draw() {
+
+        var subviews = self.subviews;
+        for subview in subviews {
+            subview.removeFromSuperview();
+        }
+        
+        // 点を描画
+        var pointSize: CGFloat = 10.0;
+        for point in points {
+            var p = (point as NSValue).CGPointValue();
+            p.x = p.x * self.frame.width - (pointSize*0.5);
+            p.y = self.frame.height - (p.y * self.frame.height) - (pointSize*0.5);
+            self.addSubview(TouchPoint(frame: CGRectMake(p.x, p.y, pointSize, pointSize)));
+        }
+
+        // 線を更新
+        self.setNeedsDisplay();
+    }
     override func drawRect(rect: CGRect) {
         
-        // UIBezierPath のインスタンス生成
+        var context = UIGraphicsGetCurrentContext();
+        
+        CGContextClearRect(context, self.frame);
+        
+        CGContextSaveGState(context);
+    
         var line = UIBezierPath();
+        UIColor.blackColor().setStroke()
+        line.lineWidth = 1;
+
+        // startpoint
+        var sp = pointToPosition((points.objectAtIndex(0) as NSValue).CGPointValue());
+        line.moveToPoint(CGPointMake(sp.x, sp.y));
         
-        // 起点
-        line.moveToPoint(CGPointMake(50, 50));
-        
-        // 帰着点
-        line.addLineToPoint(CGPointMake(220,350));
-        
-        // 色の設定
-        UIColor.redColor().setStroke()
-        
-        // ライン幅
-        line.lineWidth = 2
+        // endpoint
+        var ep = pointToPosition((points.lastObject as NSValue).CGPointValue());
+        line.addLineToPoint(CGPointMake(ep.x, ep.y));
         
         // 描画
         line.stroke();
+        
+        CGContextRestoreGState(context);
+    }
+    func pointToPosition(point: CGPoint) -> CGPoint {
+        return CGPointMake(point.x * self.frame.width, self.frame.height - (point.y * self.frame.height));
     }
 }
 
@@ -109,6 +170,7 @@ class ToneCurveVC: UIViewController
     var imageSource: UIImage!;
     var imageNow: UIImage!;
     
+    @IBOutlet weak var toneCurveView: ToneCurveView!
     var points: NSArray = [NSValue(CGPoint: CGPointMake(0.0, 0.0)), NSValue(CGPoint: CGPointMake(1.0, 1.0))];
     var points_r: NSArray = [NSValue(CGPoint: CGPointMake(0.0, 0.0)), NSValue(CGPoint: CGPointMake(1.0, 1.0))];
     var points_g: NSArray = [NSValue(CGPoint: CGPointMake(0.0, 0.0)), NSValue(CGPoint: CGPointMake(1.0, 1.0))];
@@ -134,6 +196,8 @@ class ToneCurveVC: UIViewController
         // AutoLayoutを使用するとframeが確定するのはここ
         
         preview.image = imageNow;
+        toneCurveView.setPoints(points);
+        toneCurveView.draw();
     }
     
     override func didReceiveMemoryWarning() {

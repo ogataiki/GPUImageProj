@@ -373,22 +373,6 @@
                                     </mask>
                                 </variation>
                             </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="KWR-Zt-4kb" customClass="ToneCurveView" customModule="GPUImageProj" customModuleProvider="target">
-                                <rect key="frame" x="20" y="236" width="300" height="300"/>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="300" id="60c-Ll-oee"/>
-                                    <constraint firstAttribute="width" constant="300" id="Yh8-sx-3pn"/>
-                                    <constraint firstAttribute="height" constant="450" id="ylc-Wb-drC"/>
-                                    <constraint firstAttribute="width" constant="450" id="z14-Zp-XcZ"/>
-                                </constraints>
-                                <variation key="default">
-                                    <mask key="constraints">
-                                        <exclude reference="ylc-Wb-drC"/>
-                                        <exclude reference="z14-Zp-XcZ"/>
-                                    </mask>
-                                </variation>
-                            </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xMO-Tf-gvG" customClass="ToneCurveLeftView" customModule="GPUImageProj" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="236" width="20" height="300"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -402,6 +386,22 @@
                                     <mask key="constraints">
                                         <exclude reference="2bf-BL-MuN"/>
                                         <exclude reference="Vme-lh-U5g"/>
+                                    </mask>
+                                </variation>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="KWR-Zt-4kb" customClass="ToneCurveView" customModule="GPUImageProj" customModuleProvider="target">
+                                <rect key="frame" x="20" y="236" width="300" height="300"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="300" id="60c-Ll-oee"/>
+                                    <constraint firstAttribute="width" constant="300" id="Yh8-sx-3pn"/>
+                                    <constraint firstAttribute="height" constant="450" id="ylc-Wb-drC"/>
+                                    <constraint firstAttribute="width" constant="450" id="z14-Zp-XcZ"/>
+                                </constraints>
+                                <variation key="default">
+                                    <mask key="constraints">
+                                        <exclude reference="ylc-Wb-drC"/>
+                                        <exclude reference="z14-Zp-XcZ"/>
                                     </mask>
                                 </variation>
                             </view>
@@ -444,6 +444,7 @@
                     </view>
                     <connections>
                         <outlet property="preview" destination="5NA-j3-Rxd" id="9Nw-hF-nvy"/>
+                        <outlet property="toneCurveView" destination="KWR-Zt-4kb" id="Efu-W5-Z9v"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cFJ-Pf-YY8" userLabel="First Responder" sceneMemberID="firstResponder"/>
