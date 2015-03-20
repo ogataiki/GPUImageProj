@@ -80,15 +80,15 @@ class ToneCurveView: UIView
 {
     class TouchPoint: UIView
     {
+        required init(coder aDecoder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+        
         override init(frame: CGRect) {
             super.init(frame: frame);
             backgroundColor = UIColor.clearColor();
         }
 
-        required init(coder aDecoder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
-        
         override func drawRect(rect: CGRect) {
             
             var context = UIGraphicsGetCurrentContext();
@@ -104,9 +104,68 @@ class ToneCurveView: UIView
         }
     }
     
-    var points: NSArray!;
+    var points: NSMutableArray!;
+    var movePointIndex: Int = 0;
     
-    func setPoints(arr: NSArray) {
+    var delegate: ToneCurvePointUpdateDelegate!;
+
+    func initialize(obj: ToneCurvePointUpdateDelegate) {
+        
+        delegate = obj;
+        
+        // 長押し
+        var longPressGesture = UILongPressGestureRecognizer(target: self, action: "longPressAction:");
+        self.addGestureRecognizer(longPressGesture);
+        
+        // ドラッグ
+        var panGesture = UIPanGestureRecognizer(target: self, action: "panAction:");
+        self.addGestureRecognizer(panGesture);
+    }
+    
+    func longPressAction(sender: UILongPressGestureRecognizer) {
+        
+        NSLog("longPress!");
+        
+        var location = sender.locationInView(self);
+        
+        if (sender.state == UIGestureRecognizerState.Began)
+        {
+            points.addObject(NSValue(CGPoint: positionToPoint(location)));
+            movePointIndex = points.count-1;
+        }
+        
+        if (sender.state == UIGestureRecognizerState.Ended)
+        {
+            if let target = delegate {
+                target.toneCurvePointUpdate(points);
+            }
+        }
+    }
+    func panAction(sender: UIPanGestureRecognizer) {
+        
+        NSLog("pan!");
+
+        // ドラッグで移動した距離を取得する
+        //var distance = sender.translationInView(self.view);
+        
+        // ポイントを移動
+        var p = sender.locationInView(self);
+        p.x = max(p.x, 0);
+        p.x = min(p.x, self.frame.size.width);
+        p.y = max(p.y, 0);
+        p.y = min(p.y, self.frame.size.height);
+        points[movePointIndex] = NSValue(CGPoint: positionToPoint(p));
+        
+        // 描画更新
+        draw();
+        
+        // ドラッグで移動した距離を初期化する
+        // これを行わないと、[sender translationInView:]が返す距離は、ドラッグが始まってからの蓄積値となるため、
+        // 今回のようなドラッグに合わせてImageを動かしたい場合には、蓄積値をゼロにする
+        //sender.setTranslation(CGPointZero, inView: self.view);
+    }
+
+    func setPoints(arr: NSMutableArray) {
         points = arr;
     }
     func draw() {
@@ -125,7 +184,7 @@ class ToneCurveView: UIView
             self.addSubview(TouchPoint(frame: CGRectMake(p.x, p.y, pointSize, pointSize)));
         }
 
-        // 線を更新
+        // 描画更新
         self.setNeedsDisplay();
     }
     override func drawRect(rect: CGRect) {
@@ -156,12 +215,20 @@ class ToneCurveView: UIView
     func pointToPosition(point: CGPoint) -> CGPoint {
         return CGPointMake(point.x * self.frame.width, self.frame.height - (point.y * self.frame.height));
     }
+    func positionToPoint(position: CGPoint) -> CGPoint {
+        return CGPointMake(self.frame.width / position.x, 1.0 - (self.frame.height / position.y));
+    }
 }
 
+protocol ToneCurvePointUpdateDelegate
+{
+    func toneCurvePointUpdate(arr: NSMutableArray);
+}
 class ToneCurveVC: UIViewController
     , UINavigationControllerDelegate
     , UITextFieldDelegate
     , MainVCDelegate
+    , ToneCurvePointUpdateDelegate
 {
     var delegate: ToneCurveVCDelegate!;
     
@@ -171,10 +238,13 @@ class ToneCurveVC: UIViewController
     var imageNow: UIImage!;
     
     @IBOutlet weak var toneCurveView: ToneCurveView!
-    var points: NSArray = [NSValue(CGPoint: CGPointMake(0.0, 0.0)), NSValue(CGPoint: CGPointMake(1.0, 1.0))];
-    var points_r: NSArray = [NSValue(CGPoint: CGPointMake(0.0, 0.0)), NSValue(CGPoint: CGPointMake(1.0, 1.0))];
-    var points_g: NSArray = [NSValue(CGPoint: CGPointMake(0.0, 0.0)), NSValue(CGPoint: CGPointMake(1.0, 1.0))];
-    var points_b: NSArray = [NSValue(CGPoint: CGPointMake(0.0, 0.0)), NSValue(CGPoint: CGPointMake(1.0, 1.0))];
+
+    var points: NSMutableArray = [NSValue(CGPoint: CGPointMake(0.0, 0.0)), NSValue(CGPoint: CGPointMake(1.0, 1.0))];
+    var points_r: NSMutableArray = [NSValue(CGPoint: CGPointMake(0.0, 0.0)), NSValue(CGPoint: CGPointMake(1.0, 1.0))];
+    var points_g: NSMutableArray = [NSValue(CGPoint: CGPointMake(0.0, 0.0)), NSValue(CGPoint: CGPointMake(1.0, 1.0))];
+    var points_b: NSMutableArray = [NSValue(CGPoint: CGPointMake(0.0, 0.0)), NSValue(CGPoint: CGPointMake(1.0, 1.0))];
+    
+    var movingIndex: Int = 0;
     
     func passImageSource(baseImage: UIImage)
     {
@@ -188,6 +258,7 @@ class ToneCurveVC: UIViewController
         
         
         // AutoLayoutを使用するとviewDidLoadではframeが確定しない
+        
     }
     
     override func viewDidLayoutSubviews() {
@@ -196,8 +267,9 @@ class ToneCurveVC: UIViewController
         // AutoLayoutを使用するとframeが確定するのはここ
         
         preview.image = imageNow;
-        toneCurveView.setPoints(points);
-        toneCurveView.draw();
+        
+        toneCurveView.initialize(self);
+        toneCurveViewUpdate();
     }
     
     override func didReceiveMemoryWarning() {
@@ -205,6 +277,14 @@ class ToneCurveVC: UIViewController
         // Dispose of any resources that can be recreated.
     }
     
+    func toneCurvePointUpdate(arr: NSMutableArray) {
+        points = arr;
+    }
+    
+    func toneCurveViewUpdate() {
+        toneCurveView.setPoints(points);
+        toneCurveView.draw();
+    }
     
     @IBAction func doneAction(sender: UIBarButtonItem) {
         
