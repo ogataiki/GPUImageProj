@@ -115,58 +115,69 @@ class ToneCurveView: UIView
         
         // 長押し
         var longPressGesture = UILongPressGestureRecognizer(target: self, action: "longPressAction:");
+        longPressGesture.minimumPressDuration = 0.001;
         self.addGestureRecognizer(longPressGesture);
-        
-        // ドラッグ
-        var panGesture = UIPanGestureRecognizer(target: self, action: "panAction:");
-        self.addGestureRecognizer(panGesture);
     }
     
     func longPressAction(sender: UILongPressGestureRecognizer) {
-        
-        NSLog("longPress!");
         
         var location = sender.locationInView(self);
         
         if (sender.state == UIGestureRecognizerState.Began)
         {
-            points.addObject(NSValue(CGPoint: positionToPoint(location)));
-            movePointIndex = points.count-1;
+            movePointIndex = pointsInsert(positionToPoint(location));
+            
+            // 描画更新
+            draw();
         }
-        
-        if (sender.state == UIGestureRecognizerState.Ended)
+        else if (sender.state == UIGestureRecognizerState.Changed)
+        {
+            // ポイントを移動
+            var p = sender.locationInView(self);
+            p.x = max(p.x, 0);
+            p.x = min(p.x, self.frame.size.width);
+            p.y = max(p.y, 0);
+            p.y = min(p.y, self.frame.size.height);
+            points[movePointIndex] = NSValue(CGPoint: positionToPoint(p));
+            movePointIndexExchange();
+            
+            // 描画更新
+            draw();
+        }
+        else if (sender.state == UIGestureRecognizerState.Ended)
         {
             if let target = delegate {
                 target.toneCurvePointUpdate(points);
             }
         }
     }
-    func panAction(sender: UIPanGestureRecognizer) {
-        
-        NSLog("pan!");
-
-        // ドラッグで移動した距離を取得する
-        //var distance = sender.translationInView(self.view);
-        
-        // ポイントを移動
-        var p = sender.locationInView(self);
-        p.x = max(p.x, 0);
-        p.x = min(p.x, self.frame.size.width);
-        p.y = max(p.y, 0);
-        p.y = min(p.y, self.frame.size.height);
-        points[movePointIndex] = NSValue(CGPoint: positionToPoint(p));
-        
-        // 描画更新
-        draw();
-        
-        // ドラッグで移動した距離を初期化する
-        // これを行わないと、[sender translationInView:]が返す距離は、ドラッグが始まってからの蓄積値となるため、
-        // 今回のようなドラッグに合わせてImageを動かしたい場合には、蓄積値をゼロにする
-        //sender.setTranslation(CGPointZero, inView: self.view);
-    }
 
     func setPoints(arr: NSMutableArray) {
         points = arr;
+    }
+    func pointsInsert(point: CGPoint) -> Int {
+        for i in 0 ..< points.count {
+            let p = points.objectAtIndex(i).CGPointValue();
+            if(p.x > point.x) {
+                points.insertObject(NSValue(CGPoint: point), atIndex: i);
+                return i;
+            }
+        }
+        points.addObject(NSValue(CGPoint: point));
+        return points.count-1;
+    }
+    func movePointIndexExchange() {
+        let movep = points[movePointIndex].CGPointValue();
+        let bp = points.objectAtIndex(movePointIndex-1).CGPointValue();
+        if(bp.x > movep.x) {
+            points.exchangeObjectAtIndex(movePointIndex-1, withObjectAtIndex: movePointIndex);
+            movePointIndex--;
+        }
+        let ap = points.objectAtIndex(movePointIndex+1).CGPointValue();
+        if(ap.x < movep.x) {
+            points.exchangeObjectAtIndex(movePointIndex+1, withObjectAtIndex: movePointIndex);
+            movePointIndex++;
+        }
     }
     func draw() {
 
@@ -199,24 +210,66 @@ class ToneCurveView: UIView
         UIColor.blackColor().setStroke()
         line.lineWidth = 1;
 
-        // startpoint
+        // 開始点
         var sp = pointToPosition((points.objectAtIndex(0) as NSValue).CGPointValue());
         line.moveToPoint(CGPointMake(sp.x, sp.y));
         
-        // endpoint
-        var ep = pointToPosition((points.lastObject as NSValue).CGPointValue());
-        line.addLineToPoint(CGPointMake(ep.x, ep.y));
-        
+        if (points.count == 2) {
+            var ep = pointToPosition((points.lastObject as NSValue).CGPointValue());
+            line.addLineToPoint(CGPointMake(ep.x, ep.y));
+        }
+        else
+        {
+            for i in 1 ..< points.count
+            {
+                let lp = pointToPosition((points.objectAtIndex(i-1) as NSValue).CGPointValue());
+                let tp = pointToPosition((points.objectAtIndex(i) as NSValue).CGPointValue());
+                var mp = midPointForPoints(p1:lp, p2:tp);
+                if(i == 1)
+                {
+                    line.addQuadCurveToPoint(tp, controlPoint: controlPointForPoints(p1:mp, p2:tp));
+                }
+                else if(i == points.count-1)
+                {
+                    line.addQuadCurveToPoint(tp, controlPoint: controlPointForPoints(p1:mp, p2:lp));
+                }
+                else
+                {
+                    line.addQuadCurveToPoint(mp, controlPoint: controlPointForPoints(p1:mp, p2:lp));
+                    line.addQuadCurveToPoint(tp, controlPoint: controlPointForPoints(p1:mp, p2:tp));
+                }
+            }
+        }
+
         // 描画
         line.stroke();
         
         CGContextRestoreGState(context);
     }
+    
+    func midPointForPoints(#p1: CGPoint, p2: CGPoint) -> CGPoint {
+        return CGPointMake((p1.x + p2.x) / 2, (p1.y + p2.y) / 2);
+    }
+    func controlPointForPoints(#p1: CGPoint, p2: CGPoint) -> CGPoint {
+        
+        var controlPoint = midPointForPoints(p1:p1, p2:p2);
+        var diffY = abs(p2.y - controlPoint.y);
+    
+        if (p1.y < p2.y) {
+            controlPoint.y += diffY;
+        }
+        else if (p1.y > p2.y) {
+            controlPoint.y -= diffY;
+        }
+    
+        return controlPoint;
+    }
+    
     func pointToPosition(point: CGPoint) -> CGPoint {
         return CGPointMake(point.x * self.frame.width, self.frame.height - (point.y * self.frame.height));
     }
     func positionToPoint(position: CGPoint) -> CGPoint {
-        return CGPointMake(self.frame.width / position.x, 1.0 - (self.frame.height / position.y));
+        return CGPointMake(position.x / self.frame.width, 1.0 - (position.y / self.frame.height));
     }
 }
 
