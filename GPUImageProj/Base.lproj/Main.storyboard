@@ -342,19 +342,19 @@
                                     </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="Sou-h4-Q1q"/>
                                     <barButtonItem style="plain" id="t6z-mZ-nhY">
-                                        <segmentedControl key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" id="Us1-GE-C2i">
+                                        <segmentedControl key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="fill" contentVerticalAlignment="fill" segmentControlStyle="bar" selectedSegmentIndex="0" id="Us1-GE-C2i">
                                             <rect key="frame" x="238" y="8" width="123" height="30"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <segments>
-                                                <segment title="RGB"/>
-                                                <segment title="Red"/>
-                                                <segment title="Green"/>
-                                                <segment title="Blue"/>
+                                                <segment title="All"/>
+                                                <segment title="R"/>
+                                                <segment title="G"/>
+                                                <segment title="B"/>
                                             </segments>
                                         </segmentedControl>
                                     </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="8xN-af-XdE"/>
-                                    <barButtonItem title="Reset" id="0cP-iS-YjO">
+                                    <barButtonItem systemItem="trash" id="0cP-iS-YjO">
                                         <connections>
                                             <action selector="resetAction:" destination="GNm-2l-IMu" id="cn8-I9-jF8"/>
                                         </connections>

@@ -141,8 +141,16 @@ class ToneCurveView: UIView
         {
             // ポイントを移動
             var p = sender.locationInView(self);
-            p.x = max(p.x, 0);
-            p.x = min(p.x, self.frame.size.width);
+            if(movePointIndex == 0) {
+                p.x = 0.0;
+            }
+            else if(movePointIndex == points.count-1) {
+                p.x = self.frame.size.width;
+            }
+            else {
+                p.x = max(p.x, 0);
+                p.x = min(p.x, self.frame.size.width);
+            }
             p.y = max(p.y, 0);
             p.y = min(p.y, self.frame.size.height);
             points[movePointIndex] = NSValue(CGPoint: positionToPoint(p));
@@ -179,15 +187,19 @@ class ToneCurveView: UIView
     }
     func movePointIndexExchange() {
         let movep = points[movePointIndex].CGPointValue();
-        let bp = points.objectAtIndex(movePointIndex-1).CGPointValue();
-        if(bp.x > movep.x) {
-            points.exchangeObjectAtIndex(movePointIndex-1, withObjectAtIndex: movePointIndex);
-            movePointIndex--;
+        if(movePointIndex > 0) {
+            let bp = points.objectAtIndex(movePointIndex-1).CGPointValue();
+            if(bp.x > movep.x) {
+                points.exchangeObjectAtIndex(movePointIndex-1, withObjectAtIndex: movePointIndex);
+                movePointIndex--;
+            }
         }
-        let ap = points.objectAtIndex(movePointIndex+1).CGPointValue();
-        if(ap.x < movep.x) {
-            points.exchangeObjectAtIndex(movePointIndex+1, withObjectAtIndex: movePointIndex);
-            movePointIndex++;
+        if(movePointIndex < points.count-1) {
+            let ap = points.objectAtIndex(movePointIndex+1).CGPointValue();
+            if(ap.x < movep.x) {
+                points.exchangeObjectAtIndex(movePointIndex+1, withObjectAtIndex: movePointIndex);
+                movePointIndex++;
+            }
         }
     }
     func addPointJudge(location: CGPoint) -> Int {
