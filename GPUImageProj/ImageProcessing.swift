@@ -339,6 +339,20 @@ class ImageProcessing
         filter.rgbCompositeControlPoints = points;
         return filter.imageByFilteringImage(baseImage);
     }
+    class func toneCurveFilter(baseImage: UIImage
+        , redPoints: NSArray
+        , greenPoints: NSArray
+        , bluePoints: NSArray
+        , rgbCompositePoints: NSArray
+        ) -> UIImage
+    {
+        var filter = GPUImageToneCurveFilter();
+        filter.redControlPoints = redPoints;
+        filter.greenControlPoints = greenPoints;
+        filter.blueControlPoints = bluePoints;
+        filter.rgbCompositeControlPoints = rgbCompositePoints;
+        return filter.imageByFilteringImage(baseImage);
+    }
 
     // ハイライト調整
     class func highlightShadowFilter(baseImage: UIImage) -> UIImage

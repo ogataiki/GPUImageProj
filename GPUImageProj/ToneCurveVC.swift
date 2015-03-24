@@ -125,10 +125,17 @@ class ToneCurveView: UIView
         
         if (sender.state == UIGestureRecognizerState.Began)
         {
-            movePointIndex = pointsInsert(positionToPoint(location));
+            movePointIndex = addPointJudge(positionToPoint(location));
+            if(movePointIndex >= points.count) {
+                movePointIndex = pointsInsert(positionToPoint(location));
+            }
             
             // 描画更新
             draw();
+            
+            if let target = delegate {
+                target.toneCurvePointUpdate(points);
+            }
         }
         else if (sender.state == UIGestureRecognizerState.Changed)
         {
@@ -143,6 +150,10 @@ class ToneCurveView: UIView
             
             // 描画更新
             draw();
+            
+            if let target = delegate {
+                target.toneCurvePointUpdate(points);
+            }
         }
         else if (sender.state == UIGestureRecognizerState.Ended)
         {
@@ -179,6 +190,19 @@ class ToneCurveView: UIView
             movePointIndex++;
         }
     }
+    func addPointJudge(location: CGPoint) -> Int {
+        var pointMargin: CGFloat = 0.05;
+        for i in 0 ..< points.count {
+            let p = points.objectAtIndex(i).CGPointValue();
+            if( location.x > p.x - pointMargin && location.x < p.x + pointMargin &&
+                location.y > p.y - pointMargin && location.y < p.y + pointMargin )
+            {
+                return i;
+            }
+        }
+        return points.count;
+    }
+    
     func draw() {
 
         var subviews = self.subviews;
@@ -286,6 +310,7 @@ class ToneCurveVC: UIViewController
     var delegate: ToneCurveVCDelegate!;
     
     @IBOutlet weak var preview: UIImageView!
+    @IBOutlet weak var rgbSelectControl: UISegmentedControl!
     
     var imageSource: UIImage!;
     var imageNow: UIImage!;
@@ -299,10 +324,21 @@ class ToneCurveVC: UIViewController
     
     var movingIndex: Int = 0;
     
+    enum rgbselect : Int
+    {
+        case rgb = 0, red, green, blue
+    }
+    var rgbSelect: rgbselect = rgbselect.rgb;
+
+    
     func passImageSource(baseImage: UIImage)
     {
         imageSource = baseImage;
-        imageNow = ImageProcessing.toneCurveFilter(imageSource, points:points);
+        imageNow = ImageProcessing.toneCurveFilter(imageSource,
+            redPoints: points_r,
+            greenPoints: points_g,
+            bluePoints: points_b,
+            rgbCompositePoints: points);
     }
     
     override func viewDidLoad() {
@@ -323,6 +359,8 @@ class ToneCurveVC: UIViewController
         
         toneCurveView.initialize(self);
         toneCurveViewUpdate();
+        
+        rgbSelectControl.addTarget(self, action: "rgbChange:", forControlEvents: UIControlEvents.ValueChanged);
     }
     
     override func didReceiveMemoryWarning() {
@@ -331,12 +369,83 @@ class ToneCurveVC: UIViewController
     }
     
     func toneCurvePointUpdate(arr: NSMutableArray) {
-        points = arr;
+        switch(rgbSelect)
+        {
+        case rgbselect.red:
+            points_r = arr;
+            break;
+        case rgbselect.green:
+            points_g = arr;
+            break;
+        case rgbselect.blue:
+            points_b = arr;
+            break;
+        default:
+            points = arr;
+            break;
+        }
+        
+        imageNow = ImageProcessing.toneCurveFilter(imageSource,
+            redPoints: points_r,
+            greenPoints: points_g,
+            bluePoints: points_b,
+            rgbCompositePoints: points);
+        preview.image = imageNow;
     }
     
     func toneCurveViewUpdate() {
-        toneCurveView.setPoints(points);
+        switch(rgbSelect)
+        {
+        case rgbselect.red:
+            toneCurveView.setPoints(points_r);
+            break;
+        case rgbselect.green:
+            toneCurveView.setPoints(points_g);
+            break;
+        case rgbselect.blue:
+            toneCurveView.setPoints(points_b);
+            break;
+        default:
+            toneCurveView.setPoints(points);
+            break;
+        }
         toneCurveView.draw();
+    }
+    
+    func rgbChange(seg: UISegmentedControl)
+    {
+        switch(seg.selectedSegmentIndex)
+        {
+        case rgbselect.red.rawValue:
+            rgbSelect = rgbselect.red;
+            break;
+        case rgbselect.green.rawValue:
+            rgbSelect = rgbselect.green;
+            break;
+        case rgbselect.blue.rawValue:
+            rgbSelect = rgbselect.blue;
+            break;
+        default:
+            rgbSelect = rgbselect.rgb;
+            break;
+        }
+        toneCurveView.draw();
+    }
+
+    @IBAction func resetAction(sender: UIBarButtonItem) {
+        points = [NSValue(CGPoint: CGPointMake(0.0, 0.0)), NSValue(CGPoint: CGPointMake(1.0, 1.0))];
+        points_r = [NSValue(CGPoint: CGPointMake(0.0, 0.0)), NSValue(CGPoint: CGPointMake(1.0, 1.0))];
+        points_g = [NSValue(CGPoint: CGPointMake(0.0, 0.0)), NSValue(CGPoint: CGPointMake(1.0, 1.0))];
+        points_b = [NSValue(CGPoint: CGPointMake(0.0, 0.0)), NSValue(CGPoint: CGPointMake(1.0, 1.0))];
+        
+        toneCurveView.draw();
+        
+        imageNow = ImageProcessing.toneCurveFilter(imageSource,
+            redPoints: points_r,
+            greenPoints: points_g,
+            bluePoints: points_b,
+            rgbCompositePoints: points);
+        preview.image = imageNow;
     }
     
     @IBAction func doneAction(sender: UIBarButtonItem) {
