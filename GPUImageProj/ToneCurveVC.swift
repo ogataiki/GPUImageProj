@@ -256,17 +256,28 @@ class ToneCurveView: UIView
         }
         else {
             
-            for i in 1 ..< 3 {
-                var tp = pointToPosition((points.objectAtIndex(i) as NSValue).CGPointValue());
-                line.addLineToPoint(CGPointMake(tp.x, tp.y));
-            }
-
-            for var i=4; i<points.count; ++i
+            for var i=2; i<=points.count; ++i
             {
-                var p0 = pointToPosition((points.objectAtIndex(i-3) as NSValue).CGPointValue());
+                var p0: CGPoint!;
+                if(i-3 < 0)
+                {
+                    p0 = pointToPosition((points.objectAtIndex(0) as NSValue).CGPointValue());
+                }
+                else
+                {
+                    p0 = pointToPosition((points.objectAtIndex(i-3) as NSValue).CGPointValue());
+                }
                 var p1 = pointToPosition((points.objectAtIndex(i-2) as NSValue).CGPointValue());
                 var p2 = pointToPosition((points.objectAtIndex(i-1) as NSValue).CGPointValue());
-                var p3 = pointToPosition((points.objectAtIndex(i) as NSValue).CGPointValue());
+                var p3: CGPoint!;
+                if(i >= points.count)
+                {
+                    p3 = pointToPosition((points.lastObject as NSValue).CGPointValue());
+                }
+                else
+                {
+                    p3 = pointToPosition((points.objectAtIndex(i) as NSValue).CGPointValue());
+                }
                 
                 let granularity: Int = 10;
                 for i in 1 ..< granularity
@@ -282,9 +293,6 @@ class ToneCurveView: UIView
                 }
                 line.addLineToPoint(CGPointMake(p2.x, p2.y));
             }
-            
-            var ep = pointToPosition((points.lastObject as NSValue).CGPointValue());
-            line.addLineToPoint(CGPointMake(ep.x, ep.y));
         }
 
         // 描画
