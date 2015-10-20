@@ -40,7 +40,7 @@ class SelectFilterVC: UIViewController
 
     func selectFinish()
     {
-        selectFilterDelegate = self.presentingViewController as ViewController;
+        selectFilterDelegate = self.presentingViewController as! ViewController;
         return selectFilterDelegate.filterSelectFinish(selectedSection, row: selectedRow);
     }
     

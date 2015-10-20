@@ -107,13 +107,13 @@ class Convolution3x3VC: UIViewController
     
     @IBAction func doneAction(sender: UIBarButtonItem) {
         
-        delegate = self.presentingViewController as ViewController;
+        delegate = self.presentingViewController as! ViewController;
         delegate.Convolution3x3Finish(imageNow, isDone: true);
     }
     
     @IBAction func cancelAction(sender: UIBarButtonItem) {
         
-        delegate = self.presentingViewController as ViewController;
+        delegate = self.presentingViewController as! ViewController;
         delegate.Convolution3x3Finish(imageNow, isDone: false);
     }
 
@@ -144,7 +144,7 @@ class Convolution3x3VC: UIViewController
         textField.resignFirstResponder();
         
         // 入力を数値に丸める
-        textField.text = NSString(format: "%.2f", NSString(string: textField.text).floatValue);
+        textField.text = NSString(format: "%.2f", NSString(string: textField.text).floatValue) as String;
         
         // イメージ更新
         kernelUpdate();

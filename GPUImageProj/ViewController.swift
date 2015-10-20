@@ -77,7 +77,7 @@ class ViewController: UIViewController
         // フィルタ選択
         if let image = imageSource
         {
-            var selectView = self.storyboard?.instantiateViewControllerWithIdentifier("SelectFilterVC") as UIViewController;
+            var selectView = self.storyboard?.instantiateViewControllerWithIdentifier("SelectFilterVC") as! UIViewController;
             self.presentViewController(selectView, animated: true, completion: { () -> Void in
                 
             })
@@ -116,7 +116,7 @@ class ViewController: UIViewController
         {
             self.dismissViewControllerAnimated(true, completion: { () -> Void in
                 // トーンカーブの場合はビューを指定
-                let nextView = self.storyboard?.instantiateViewControllerWithIdentifier("ToneCurveVC") as ToneCurveVC;
+                let nextView = self.storyboard?.instantiateViewControllerWithIdentifier("ToneCurveVC") as! ToneCurveVC;
                 nextView.passImageSource((self.beforAfter == selectImage.befor) ? self.imageSource : self.imageNow);
                 self.presentViewController(nextView, animated: true, completion: nil);
             });
@@ -126,7 +126,7 @@ class ViewController: UIViewController
         {
             self.dismissViewControllerAnimated(true, completion: { () -> Void in
                 // 畳み込みカーネルの場合はビューを指定
-                let nextView = self.storyboard?.instantiateViewControllerWithIdentifier("Convolution3x3VC") as Convolution3x3VC;
+                let nextView = self.storyboard?.instantiateViewControllerWithIdentifier("Convolution3x3VC") as! Convolution3x3VC;
                 nextView.passImageSource((self.beforAfter == selectImage.befor) ? self.imageSource : self.imageNow);
                 self.presentViewController(nextView, animated: true, completion: nil);
             });
@@ -265,8 +265,8 @@ class ViewController: UIViewController
         }
         else
         {
-            imageSource = dic.objectForKey(UIImagePickerControllerOriginalImage) as UIImage;
-            imageNow = dic.objectForKey(UIImagePickerControllerOriginalImage) as UIImage;
+            imageSource = dic.objectForKey(UIImagePickerControllerOriginalImage) as! UIImage;
+            imageNow = dic.objectForKey(UIImagePickerControllerOriginalImage) as! UIImage;
             
             // そのまま表示
             self.showImageView.image = self.imageSource;
